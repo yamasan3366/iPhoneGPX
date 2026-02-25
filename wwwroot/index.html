@@ -52,10 +52,18 @@
 
         // GPX軌跡の描画
         window.drawTrack = (points) => {
+            console.log("受け取ったポイント数:", points.length);
+            if (!points || points.length === 0) return;
+
             if (polyline) map.removeLayer(polyline);
-            polyline = L.polyline(points.map(p => [p.lat, p.lon]), { color: 'red' }).addTo(map);
+
+            // C#側のプロパティ名（lat, lon）と一致している必要があります
+            var latlngs = points.map(p => [p.lat, p.lon]);
+
+            polyline = L.polyline(latlngs, { color: 'red', weight: 4 }).addTo(map);
             map.fitBounds(polyline.getBounds());
         };
+
     </script>
 
 </head>

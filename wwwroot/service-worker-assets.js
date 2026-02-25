@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "uJ1LuIsY",
+  "version": "Ri8QIdxK",
   "assets": [
     {
       "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
@@ -66,7 +66,7 @@ self.assetsManifest = {
       "url": "_framework/System.Collections.NonGeneric.wasm"
     },
     {
-      "hash": "sha256-JHwN6WSYfBBeHrqdoFq68c9836kuUFAEAFHa8t/CYZ8=",
+      "hash": "sha256-QhzaO3CJK6iSPD1qJtsuIpRDI4GQmxyQdVPMD/8JnqY=",
       "url": "_framework/System.Collections.wasm"
     },
     {
@@ -78,7 +78,7 @@ self.assetsManifest = {
       "url": "_framework/System.ComponentModel.wasm"
     },
     {
-      "hash": "sha256-6wPZenFLiDXTi0J3c9mO0CosFFG3p+Xpy35OLXGYPAg=",
+      "hash": "sha256-yHAQsyvCfec1ATnTgqXPu6rtdZBmUy2ahm/yPFRoBpw=",
       "url": "_framework/System.Console.wasm"
     },
     {
@@ -110,7 +110,7 @@ self.assetsManifest = {
       "url": "_framework/System.ObjectModel.wasm"
     },
     {
-      "hash": "sha256-pVRzkf9+3KdH+CewIFdVCIpnRe62i6IQ1MUKTjNHm+A=",
+      "hash": "sha256-vZaThRC9V1wiAj2R1wXP4TBorbxOT9Cw3Pxiqvyr4VI=",
       "url": "_framework/System.Private.CoreLib.wasm"
     },
     {
@@ -130,7 +130,7 @@ self.assetsManifest = {
       "url": "_framework/System.Runtime.InteropServices.JavaScript.wasm"
     },
     {
-      "hash": "sha256-nG6AZ42r0hrG+RaI1pPd2NbZreMssaO+FM0F4cChI+g=",
+      "hash": "sha256-51WmUH/4qvvs6p85dmQVRY43Otoldx+Z5tm1jEheY/w=",
       "url": "_framework/System.Runtime.wasm"
     },
     {
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-LshwwpC6Stouq/HeMoPjMFw0O2WlxrlnwZndxls6kXw=",
+      "hash": "sha256-t222Sea+vTcN+Z74MnSX7RUbiGoOkIXcZz+IMSiUV5M=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-PQBTX4tjX7O2XHwXlniJFtvQFcv2SsAtUmTKiHZ+30Y=",
+      "hash": "sha256-uPbXpX7SAkjaB+VuCtDl9+Bp+OAtaUpjhm2fCm+gO0k=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-TJHnSLjyIOv6bQKhLytUeEUjT3+nyOA6SxstDekYa9Q=",
+      "hash": "sha256-pIW8zJB6gxB0g+2QbRVNDf2DjVFptk6fHv5r0iXKSsU=",
       "url": "index.html"
     },
     {
