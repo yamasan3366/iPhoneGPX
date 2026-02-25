@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "xdpv7Spv",
+  "version": "uJ1LuIsY",
   "assets": [
     {
       "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
@@ -86,7 +86,7 @@ self.assetsManifest = {
       "url": "_framework/System.Diagnostics.DiagnosticSource.wasm"
     },
     {
-      "hash": "sha256-H3sLN/NWywxycN339SJfa8ErI/Rg0zdsRns+k9FO5+c=",
+      "hash": "sha256-xmVl8lzPe18pE2b5aQFs+YTUz5+VaCGJwVxa48hjDVs=",
       "url": "_framework/System.Linq.wasm"
     },
     {
@@ -130,7 +130,7 @@ self.assetsManifest = {
       "url": "_framework/System.Runtime.InteropServices.JavaScript.wasm"
     },
     {
-      "hash": "sha256-MicMHZs2H24CIjmT0no+6voYwU61IQ3oE1ss4gbaJVE=",
+      "hash": "sha256-nG6AZ42r0hrG+RaI1pPd2NbZreMssaO+FM0F4cChI+g=",
       "url": "_framework/System.Runtime.wasm"
     },
     {
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-Z1WtsRouKrmegIV3GRykhAOiHBMfxEz1/JjTDOUkLcw=",
+      "hash": "sha256-LshwwpC6Stouq/HeMoPjMFw0O2WlxrlnwZndxls6kXw=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-o4xBelBbJ0T/OI/YPU6sAkxAOIQqAVjisXg4Yo7HqZE=",
+      "hash": "sha256-PQBTX4tjX7O2XHwXlniJFtvQFcv2SsAtUmTKiHZ+30Y=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
