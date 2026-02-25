@@ -59,7 +59,6 @@
       "iPhoneGPX.wasm": "sha256-uPbXpX7SAkjaB+VuCtDl9+Bp+OAtaUpjhm2fCm+gO0k="
     }
   },
-  "cacheBootResources": true,
   "debugLevel": 0,
   "linkerEnabled": true,
   "globalizationMode": "sharded",

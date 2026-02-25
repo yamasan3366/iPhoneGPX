@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "Ri8QIdxK",
+  "version": "4h7dWdRe",
   "assets": [
     {
       "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-t222Sea+vTcN+Z74MnSX7RUbiGoOkIXcZz+IMSiUV5M=",
+      "hash": "sha256-OBr5Z2m+ORRB+Aw3jTc8IL7YIV6fjGYjRcpAqyeOSq4=",
       "url": "_framework/blazor.boot.json"
     },
     {
