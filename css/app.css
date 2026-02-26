@@ -103,32 +103,34 @@ code {
 }
 
 /* 画面全体の余白を消す */
+/* app.css */
 html, body, #app {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* スクロールを禁止してアプリ感を出す */
+    width: 100%;
 }
 
-/* 地図のコンテナを画面いっぱいに */
+/* 地図：ここが 0px だと何も見えません */
 .full-screen-map {
-    height: 100vh; /* 画面の高さ100% */
-    width: 100vw; /* 画面の幅100% */
+    height: 100vh !important;
+    width: 100vw !important;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
+    background-color: #e5e3df; /* 地図が読み込まれる前の背景色 */
 }
 
-/* ボタン類を地図の上に浮かせる */
+/* 操作パネル：iPhoneのノッチ（セーフエリア）を考慮 */
 .floating-controls {
     position: absolute;
-    top: env(safe-area-inset-top, 10px); /* iPhoneのノッチを避ける */
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
     left: 10px;
     right: 10px;
-    z-index: 1000; /* 地図より上に表示 */
-    background: rgba(255, 255, 255, 0.8); /* 半透明の白 */
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.85);
     padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
