@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "iPhoneGPX",
   "resources": {
-    "hash": "sha256-ig3Lq8cqs5xtDK1eQ0gb/ZoNo0YcxnmUFxJT/hchMCg=",
+    "hash": "sha256-CqlvJWNGt3BY8Ar/B/KE1Jtoa3+RSNLxXw6aj3NYBLU=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-4g0GzvOXSwZvTLca4PrWJkoeltz+V9IF/hEFDcnVros="
     },
@@ -34,29 +34,29 @@
       "Microsoft.JSInterop.WebAssembly.wasm": "sha256-YKFXGtvlhUfQEU9Nshy5p9J3WOa7o3QEPtSoduaCmZM=",
       "System.Collections.Concurrent.wasm": "sha256-BezX8m3Ah72/s5Ag6YTEN+tx1OUDZ7RzdxZsmqVSd58=",
       "System.Collections.NonGeneric.wasm": "sha256-I4k89blf5CWMju1zEG6a3uyL1fImc8oUvM8t38fVsAU=",
-      "System.Collections.wasm": "sha256-QhzaO3CJK6iSPD1qJtsuIpRDI4GQmxyQdVPMD/8JnqY=",
+      "System.Collections.wasm": "sha256-BoAwJCFURDR2dtJirp1DC+zRMYTvjjilvuCm5R28CyU=",
       "System.ComponentModel.TypeConverter.wasm": "sha256-S7ls61k5B/hYgiarFO9osdclehqfvfgcEhUaxHF3cBY=",
       "System.ComponentModel.wasm": "sha256-NwdL+bCT1n5DFHznF82J+HsgMqmrgx7yfNJtf2wG9W4=",
       "System.Console.wasm": "sha256-6wPZenFLiDXTi0J3c9mO0CosFFG3p+Xpy35OLXGYPAg=",
       "System.Diagnostics.DiagnosticSource.wasm": "sha256-Gq5wQ5EOvYKLA+zNsvbgbqsgha7AI1j2t9ULIKbUYOk=",
-      "System.Linq.wasm": "sha256-xmVl8lzPe18pE2b5aQFs+YTUz5+VaCGJwVxa48hjDVs=",
+      "System.Linq.wasm": "sha256-0LRWltvVQ6OiRZ0mrVf2gyvUxJ2aMeNjJfM7jyg+6d8=",
       "System.Memory.wasm": "sha256-nJVbQBJn/j0C7xVbdnNFhWaPkZHsxuCcEiVBnPL3QtE=",
       "System.Net.Http.Json.wasm": "sha256-hiqJUUko/i4IBlaV2QA0OvEIA6zTXEU8V6Xc1tKBPGs=",
       "System.Net.Http.wasm": "sha256-VuM7MQ/QMgBRTMxbUdtF9OIhiQk4ICxCj8J3j7/RnPY=",
       "System.Net.Primitives.wasm": "sha256-1qcsGHhOXcuqb9iJj964eAhM69peWtMX7e51LBkcZ1U=",
       "System.ObjectModel.wasm": "sha256-nDEJz6SvyUKz3eTqyKCdR8n/EnZhWVVgGVOnkyY5N7s=",
       "System.Private.Uri.wasm": "sha256-NhNI/TOFva3bsaoMUNdTFlpr2igHA2oYZDBm+NaXSlE=",
-      "System.Private.Xml.Linq.wasm": "sha256-l6I3dQM+H5komoyJEsblHuUOHUsy2Ha4pdngzdZI4EE=",
+      "System.Private.Xml.Linq.wasm": "sha256-kDKIji5xPAXbzsX9jRZqbADAi28VvMIx9YL+a5+MgSo=",
       "System.Private.Xml.wasm": "sha256-8g8kmn6HiULIXwzLLLvVnLkh4xRj9nPhpTYFnugswQI=",
       "System.Runtime.InteropServices.JavaScript.wasm": "sha256-uen3vMNjTv0ONRBXYBxlO5YkaiURAUH9oTdnsg5NZR8=",
-      "System.Runtime.wasm": "sha256-CdniFYXSC7Wn2eU6edA/Q5rU3xTHpmodIDWe4EXDDPc=",
+      "System.Runtime.wasm": "sha256-uLJTXBQZxX6uqlmai7uVPyr+BuKDLjBWHz4w+kNrsco=",
       "System.Text.Encodings.Web.wasm": "sha256-lDNhBYxzB2oWW3QF6CVQvqP8vU/iFCBV+gT4zkljouY=",
       "System.Text.Json.wasm": "sha256-AizOocAVrfE45ltvRSEiWascDtD0RbllSMBJYM5refY=",
       "System.Text.RegularExpressions.wasm": "sha256-EBNNP57+VS/OjAuJHOY1mCfaJCJQYORnhF3/w7wP5kI=",
       "System.Xml.Linq.wasm": "sha256-7S5htdOhk5atRasRo4dCnLDmfszHScYLXiz4u+AwGyI=",
       "System.Xml.XDocument.wasm": "sha256-HzngqKmyt6plBGIjY+8XfKow3ZZrOYs1qTIDwNw1h8w=",
-      "System.Private.CoreLib.wasm": "sha256-CYg2N6nAbNOyuRTjbnOQGh6/DdWi5Kce36N/MlwKN4E=",
-      "iPhoneGPX.wasm": "sha256-HMqgJY/oNAYvYnXMgNOkLoCDkL1Y+1sh8nZETWegZqI="
+      "System.Private.CoreLib.wasm": "sha256-uK0mom3kzXzN3wj1PucPddPCq83qJMUjOmbxVg5NLiU=",
+      "iPhoneGPX.wasm": "sha256-wYU2gzyzqqYc6R7waZIkBumHuyV4bdVhQgGL0HB6Row="
     }
   },
   "debugLevel": 0,

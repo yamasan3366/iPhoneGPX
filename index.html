@@ -17,13 +17,36 @@
         let polyline;
         let userMarker;
 
+        // index.html の script 部分を更新
+        let stdLayer, photoLayer;
+
         window.initMap = () => {
-            if (map) return; // 二重初期化防止
-            map = L.map('map').setView([35.681236, 139.767125], 13);
-            L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
-                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>'
-            }).addTo(map);
+            if (map) return;
+
+            // 標準地図
+            stdLayer = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+                attribution: '国土地理院'
+            });
+
+            // 航空写真
+            photoLayer = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
+                attribution: '国土地理院'
+            });
+
+            map = L.map('map', {
+                center: [35.681236, 139.767125],
+                zoom: 13,
+                layers: [stdLayer] // 初期レイヤー
+            });
+
+            // レイヤー切替コントロールを追加
+            const baseMaps = {
+                "標準地図": stdLayer,
+                "写真": photoLayer
+            };
+            L.control.layers(baseMaps).addTo(map);
         };
+
 
         window.drawTrack = (points) => {
             if (!map) window.initMap();
