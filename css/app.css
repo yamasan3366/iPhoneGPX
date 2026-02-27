@@ -6,7 +6,7 @@ html, body, #app {
     overflow: hidden;
 }
 
-.full-screen-map {
+#map {
     height: 100vh !important;
     width: 100vw !important;
     position: absolute;
@@ -15,15 +15,12 @@ html, body, #app {
     z-index: 1;
 }
 
-/* ボタン群：+-ボタンの右側に横並び */
 .floating-controls {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0px) + 10px);
-    left: 55px; /* Leafletのズームボタンを避ける */
-    right: 10px;
+    left: 55px;
     z-index: 1000;
     display: flex;
-    flex-direction: row;
     gap: 6px;
     pointer-events: none;
 }
@@ -32,45 +29,36 @@ html, body, #app {
         pointer-events: auto;
     }
 
-/* ナビボタン：幅を狭く */
 .nav-btn {
-    width: 32px;
+    width: 35px;
     height: 46px;
-    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
-/* アクションボタン：正方形に近い形 */
 .action-btn {
     width: 46px;
     height: 46px;
-    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.3rem;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
-/* 下部標高グラフ */
-/* app.css の該当箇所を差し替え */
+/* グラフ：画面最下部に固定 */
 .elevation-chart-container {
-    position: fixed !important; /* absoluteからfixedに変更 */
-    bottom: 0 !important; /* 強制的に下端へ */
-    left: 0;
-    right: 0;
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important; /* 絶対に下 */
     height: 160px;
-    background: rgba(255, 255, 255, 0.95);
-    z-index: 2000; /* 地図より確実に上に */
-    border-top: 2px solid #007bff;
+    background: white;
+    z-index: 2000;
+    border-top: 1px solid #ccc;
     padding: 10px 15px calc(env(safe-area-inset-bottom, 0px) + 10px) 15px;
     display: none;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
 }
 
     .elevation-chart-container.active {
