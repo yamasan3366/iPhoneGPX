@@ -58,20 +58,21 @@ html, body, #app {
 }
 
 /* 下部標高グラフ */
+/* app.css の該当箇所を差し替え */
 .elevation-chart-container {
-    position: absolute;
-    bottom: 0;
+    position: fixed !important; /* absoluteからfixedに変更 */
+    bottom: 0 !important; /* 強制的に下端へ */
     left: 0;
     right: 0;
-    height: 150px;
-    background: rgba(255, 255, 255, 0.92);
-    z-index: 1100;
-    border-top: 1px solid #bbb;
-    padding: 10px 15px calc(env(safe-area-inset-bottom, 0px) + 5px) 15px;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 2000; /* 地図より確実に上に */
+    border-top: 2px solid #007bff;
+    padding: 10px 15px calc(env(safe-area-inset-bottom, 0px) + 10px) 15px;
     display: none;
-    box-shadow: 0 -3px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
 }
 
     .elevation-chart-container.active {
-        display: block;
+        display: block !important;
     }
