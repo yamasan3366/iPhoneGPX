@@ -31,15 +31,31 @@
             L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(map);
         };
 
+        // index.html の script 部分の drawTrack を以下に差し替え
         window.drawTrack = (points) => {
-            if (!map) return;
+            // もし map が未初期化なら、その場で初期化を試みる
+            if (!map) {
+                window.initMap();
+            }
+
+            // それでも map がなければ、少し待ってリトライ（PCのタイミング対策）
+            if (!map) {
+                setTimeout(() => window.drawTrack(points), 200);
+                return;
+            }
+
             if (polyline) map.removeLayer(polyline);
-            // エラー防止のためデータチェック
             if (!points || points.length === 0) return;
 
             const latlngs = points.map(p => [p.lat, p.lon]);
-            polyline = L.polyline(latlngs, { color: 'red', weight: 5 }).addTo(map);
-            map.fitBounds(polyline.getBounds());
+            polyline = L.polyline(latlngs, { color: 'red', weight: 5, opacity: 0.8 }).addTo(map);
+
+            // 地図の範囲を軌跡に合わせる
+            try {
+                map.fitBounds(polyline.getBounds(), { padding: [20, 20] });
+            } catch (e) {
+                console.error("fitBounds error:", e);
+            }
         };
 
         window.getLocation = () => {
