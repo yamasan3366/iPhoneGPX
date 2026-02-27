@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>iPhone GPX Viewer</title>
+    <title>GPX Viewer</title>
     <base href="/iPhoneGPX/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
@@ -13,7 +13,6 @@
     <script>
         let map, polyline, userMarker;
 
-        // 地図の初期化を安全に行う関数
         window.initMap = () => {
             const container = document.getElementById('map');
             if (!container || map) return;
@@ -31,15 +30,9 @@
             L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(map);
         };
 
-        // index.html の script 部分の drawTrack を以下に差し替え
         window.drawTrack = (points) => {
-            // もし map が未初期化なら、その場で初期化を試みる
             if (!map) {
                 window.initMap();
-            }
-
-            // それでも map がなければ、少し待ってリトライ（PCのタイミング対策）
-            if (!map) {
                 setTimeout(() => window.drawTrack(points), 200);
                 return;
             }
@@ -50,12 +43,9 @@
             const latlngs = points.map(p => [p.lat, p.lon]);
             polyline = L.polyline(latlngs, { color: 'red', weight: 5, opacity: 0.8 }).addTo(map);
 
-            // 地図の範囲を軌跡に合わせる
-            try {
-                map.fitBounds(polyline.getBounds(), { padding: [20, 20] });
-            } catch (e) {
-                console.error("fitBounds error:", e);
-            }
+            setTimeout(() => {
+                try { map.fitBounds(polyline.getBounds(), { padding: [20, 20] }); } catch (e) { }
+            }, 100);
         };
 
         window.getLocation = () => {
@@ -64,7 +54,6 @@
                 const lat = pos.coords.latitude, lon = pos.coords.longitude;
                 map.setView([lat, lon], 15);
                 if (userMarker) map.removeLayer(userMarker);
-                // アイコンのパスエラーを避けるため、サークルマーカーに変更（確実に出ます）
                 userMarker = L.circleMarker([lat, lon], { color: 'blue', radius: 8, fillOpacity: 0.8 }).addTo(map);
             }, err => alert("位置情報取得失敗"), { enableHighAccuracy: true });
         };
