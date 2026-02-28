@@ -18,16 +18,15 @@ html, body, #app {
 .floating-controls {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0px) + 10px);
-    /* 1cm‚Ù‚Ç¶‚ÉŠñ‚¹‚éi55px‚©‚ç95px‚É•ÏXj */
-    left: 15px;
-    /* ‰E’[‚É—]—T‚ğ‚½‚¹‚éi10px‚©‚ç30px‚É•ÏXj */
-    right: 10px;
+    /* ¶’[‚©‚ç‚Ì‹——£‚ğƒMƒ…ƒb‚Æk‚ß‚ÄA‘S‘Ì‚ğ¶‚ÉŠñ‚¹‚Ü‚· */
+    left: 15px !important;
+    /* ‰E‘¤‚Ì‚Í‚İo‚µ‚ğ–h‚®‚½‚ß‚ÌƒK[ƒh */
+    right: auto !important;
     z-index: 1000;
     display: flex;
     flex-direction: row;
-    gap: 8px; /* ƒ{ƒ^ƒ““¯m‚ÌŒ„ŠÔ‚ğ­‚µL‚°‚Ä‰Ÿ‚µ‚â‚·‚­ */
+    gap: 6px;
     pointer-events: none;
-    justify-content: flex-start; /* ¶‹l‚ß‚É‚·‚é */
 }
     .floating-controls > * {
         pointer-events: auto;
