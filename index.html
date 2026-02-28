@@ -13,6 +13,58 @@
     <script>
         let map, polyline, userMarker;
 
+        // index.html の script 部分を更新
+        let watchId = null;
+        let walkPoints = []; // 実績ルートの座標
+        let walkPolyline = null; // 実績ルートの線（青）
+
+        window.startTracking = (dotNetObj) => {
+            if (watchId) return;
+
+            // 高精度モードかつ電池消費を抑える設定
+            const options = {
+                enableHighAccuracy: true, // GPSを優先
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            watchId = navigator.geolocation.watchPosition(pos => {
+                const p = {
+                    lat: pos.coords.latitude,
+                    lon: pos.coords.longitude,
+                    ele: pos.coords.altitude || 0,
+                    time: new Date().toISOString()
+                };
+
+                // 1. データを配列に追加
+                walkPoints.push(p);
+
+                // 2. 地図上に青い線を描画
+                const latlngs = walkPoints.map(x => [x.lat, x.lon]);
+                if (!walkPolyline) {
+                    walkPolyline = L.polyline(latlngs, { color: 'blue', weight: 4, dashArray: '5, 10' }).addTo(map);
+                } else {
+                    walkPolyline.setLatLngs(latlngs);
+                }
+
+                // 3. 現在地アイコンの更新
+                if (userMarker) userMarker.setLatLng([p.lat, p.lon]);
+                else userMarker = L.circleMarker([p.lat, p.lon], { color: 'blue', radius: 8 }).addTo(map);
+
+                // 4. C#側にデータを送って保存・計算させる
+                dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
+
+            }, err => console.error(err), options);
+        };
+
+        window.stopTracking = () => {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+        };
+
+
         window.initMap = () => {
             const container = document.getElementById('map');
             if (!container || map) return;
