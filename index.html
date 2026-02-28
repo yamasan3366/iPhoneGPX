@@ -66,26 +66,25 @@
 
 
         window.initMap = () => {
-            const container = document.getElementById('map');
-            if (!container || map) return;
+            if (map) return;
 
             map = L.map('map', {
                 center: [35.68, 139.76],
                 zoom: 13,
-                zoomControl: false // 標準の左上ボタンを完全に無効化
+                zoomControl: false // 標準の左上ボタンを確実にOFF
             });
-
-            // 1. ズームボタンを右下に追加（レイヤーボタンの上に重なるよう、先に追加）
-            L.control.zoom({ position: 'bottomright' }).addTo(map);
 
             const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
             const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院' });
-
             std.addTo(map);
 
-            // 2. レイヤーボタンを右下に追加
+            // ズームボタンを先に追加（一番下に来る）
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            // レイヤーボタンを次に追加（ズームの上に来る）
             L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(map);
         };
+
 
         window.drawTrack = (points) => {
             if (!map) {

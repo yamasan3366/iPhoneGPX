@@ -68,17 +68,28 @@ html, body, #app {
         display: block !important;
     }
 
-/* 右下のコントロール群（ズーム・レイヤー）を一括で上にずらす */
-.leaflet-bottom.leaflet-right {
-    /* 標高グラフ(160px) + 少しの余白(10px) 分、上に配置 */
-    margin-bottom: 170px !important;
+/* 右下のコントロール（ズーム・レイヤー）をまとめて制御 */
+.leaflet-right.leaflet-bottom {
+    /* 1. 標準の配置設定をすべてリセット */
+    top: auto !important;
+    left: auto !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    /* 2. 標高グラフ(160px) + 余白(10px) + iPhoneの下部バー(env) 分だけ浮かせる */
+    margin-bottom: calc(160px + env(safe-area-inset-bottom, 0px) + 10px) !important;
     margin-right: 10px !important;
+    /* 3. 縦に並べる設定を強制 */
+    display: flex !important;
+    flex-direction: column-reverse !important; /* 下から順に積む */
+    align-items: flex-end !important;
+    z-index: 1050 !important; /* 地図より上、グラフより下 */
 }
 
-/* 各ボタン間の隙間を調整 */
+/* ボタン同士の隙間を固定 */
 .leaflet-control {
-    margin-bottom: 10px !important;
+    margin: 4px 0 !important; /* 上下の隙間を一定にする */
 }
+
 
 /* 記録ボタンのデザイン（再定義） */
 .rec-btn-container {
