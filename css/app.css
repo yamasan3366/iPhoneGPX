@@ -18,14 +18,17 @@ html, body, #app {
 .floating-controls {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0px) + 10px);
-    left: 55px; /* Leafletのボタン右 */
+    /* 1cmほど左に寄せる（55pxから95pxに変更） */
+    left: 95px;
+    /* 右端に余裕を持たせる（10pxから30pxに変更） */
+    right: 30px;
     z-index: 1000;
     display: flex;
     flex-direction: row;
-    gap: 6px;
+    gap: 8px; /* ボタン同士の隙間を少し広げて押しやすく */
     pointer-events: none;
+    justify-content: flex-start; /* 左詰めにする */
 }
-
     .floating-controls > * {
         pointer-events: auto;
     }
