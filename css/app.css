@@ -67,3 +67,57 @@ html, body, #app {
     .elevation-chart-container.active {
         display: block !important;
     }
+
+
+/* ズームボタンを左下へ強制移動 */
+.leaflet-bottom.leaflet-left {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 160px) !important; /* 標高グラフの上 */
+    left: 10px !important;
+}
+
+/* 記録ボタン（ビデオ撮影風） */
+.rec-btn-container {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* 停止中（赤い丸） */
+.rec-start-icon {
+    width: 20px;
+    height: 20px;
+    background-color: #ff3b30;
+    border-radius: 50%;
+}
+
+/* 記録中（赤い四角） */
+.rec-stop-icon {
+    width: 16px;
+    height: 16px;
+    background-color: #ff3b30;
+    border-radius: 2px;
+}
+
+/* 記録中の点滅アニメーション（任意） */
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.recording-active {
+    animation: blink 2s infinite;
+}
