@@ -68,21 +68,33 @@ html, body, #app {
         display: block !important;
     }
 
-/* 右下のコントロール（ズーム・レイヤー）をまとめて制御 */
+/* 右下エリア全体の持ち上げを一旦リセット */
 .leaflet-right.leaflet-bottom {
-    /* 1. 標準の配置設定をすべてリセット */
-    top: auto !important;
-    left: auto !important;
+    bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* クレジット（文字）を最下部に固定し、背景を少し透過させる */
+.leaflet-control-attribution {
+    margin: 0 !important;
+    padding: 2px 5px !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    font-size: 9px !important;
+    line-height: 10px !important;
+    /* 標高グラフの下に潜り込ませるか、グラフの隙間に置く */
+    position: fixed !important;
     bottom: 0 !important;
     right: 0 !important;
-    /* 2. 標高グラフ(160px) + 余白(10px) + iPhoneの下部バー(env) 分だけ浮かせる */
-    margin-bottom: calc(160px + env(safe-area-inset-bottom, 0px) + 10px) !important;
-    margin-right: 10px !important;
-    /* 3. 縦に並べる設定を強制 */
-    display: flex !important;
-    flex-direction: column-reverse !important; /* 下から順に積む */
-    align-items: flex-end !important;
-    z-index: 1050 !important; /* 地図より上、グラフより下 */
+    z-index: 1000 !important;
+}
+
+/* ズームボタンとレイヤーボタン「だけ」を個別に浮かせる */
+.leaflet-control-zoom, .leaflet-control-layers {
+    /* 標高グラフ(160px) + 余白(10px) 分、上に強制移動 */
+    position: relative !important;
+    bottom: calc(160px + env(safe-area-inset-bottom, 0px) + 10px) !important;
+    right: 10px !important;
+    margin-bottom: 10px !important; /* ボタン同士の間隔 */
 }
 
 /* ボタン同士の隙間を固定 */
