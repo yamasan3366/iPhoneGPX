@@ -70,12 +70,13 @@ html, body, #app {
 
 
 /* ズームボタンを左下へ強制移動 */
+/* 左下のズームボタンの位置を底上げ（グラフの高さ分＋余白） */
 .leaflet-bottom.leaflet-left {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 160px) !important; /* 標高グラフの上 */
-    left: 10px !important;
+    margin-bottom: 170px !important;
+    margin-left: 10px !important;
 }
 
-/* 記録ボタン（ビデオ撮影風） */
+/* ビデオ風記録ボタンの土台 */
 .rec-btn-container {
     width: 46px;
     height: 46px;
@@ -85,22 +86,23 @@ html, body, #app {
     background: white;
     border-radius: 50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    border: 2px solid #ccc; /* 枠線を追加して視認性アップ */
 }
 
-/* 停止中（赤い丸） */
+/* 停止中：赤い丸 */
 .rec-start-icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     background-color: #ff3b30;
     border-radius: 50%;
 }
 
-/* 記録中（赤い四角） */
+/* 記録中：白い枠の中に赤い四角 */
 .rec-stop-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     background-color: #ff3b30;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 /* 記録中の点滅アニメーション（任意） */

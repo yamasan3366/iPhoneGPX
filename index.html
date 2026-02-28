@@ -72,8 +72,11 @@
             map = L.map('map', {
                 center: [35.68, 139.76],
                 zoom: 13,
-                zoomControl: true
+                zoomControl: false // 一旦標準の左上ボタンを消す
             });
+
+            // ズームボタンを「左下」に改めて追加（標高グラフ 160px の上に配置）
+            L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
             const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
             const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院' });
@@ -81,6 +84,7 @@
             std.addTo(map);
             L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(map);
         };
+
 
         window.drawTrack = (points) => {
             if (!map) {
