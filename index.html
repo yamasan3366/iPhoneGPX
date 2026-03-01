@@ -169,13 +169,25 @@
         };
 
         window.downloadFile = (fileName, content) => {
-            const blob = new Blob([content], { type: 'application/gpx+xml' });
-            const url = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = fileName;
-            anchor.click();
-            URL.revokeObjectURL(url);
+            try {
+                const blob = new Blob([content], { type: 'application/gpx+xml' });
+                const url = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+
+                anchor.style.display = 'none';
+                anchor.href = url;
+                anchor.download = fileName;
+
+                document.body.appendChild(anchor); // 一旦bodyに追加
+                anchor.click(); // クリック実行
+
+                setTimeout(() => {
+                    document.body.removeChild(anchor);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
+            } catch (e) {
+                alert("保存に失敗しました: " + e.message);
+            }
         };
 
     </script>

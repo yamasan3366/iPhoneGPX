@@ -124,21 +124,6 @@ html, body, #app {
     stroke-linecap: round;
 }
 
-/* 設定メニュー用のスタイル（簡易版） */
-/*.settings-panel {
-    position: absolute;
-    top: 70px;
-    right: 15px;
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-*/
 
 /* 記録ボタンのデザイン（再定義） */
 .rec-btn-container {
@@ -166,6 +151,7 @@ html, body, #app {
     background-color: #ff3b30;
     border-radius: 3px;
 }
+
 /* 記録中の点滅アニメーション（任意） */
 @keyframes blink {
     0% {
@@ -222,4 +208,22 @@ html, body, #app {
     flex-direction: row;
     gap: 12px; /* ボタン同士を少し離して誤タップ防止 */
     pointer-events: none;
+}
+
+/* 保存ボタン：目立つように */
+.btn-export {
+    background-color: #007bff !important;
+    color: white !important;
+    font-weight: bold;
+    height: 50px;
+    margin-top: 10px;
+}
+
+/* 消去ボタン：誤操作を防ぐためにマージンを空け、少し小さく */
+.btn-clear-log {
+    margin-top: 30px !important; /* 保存ボタンから大きく離す */
+    background-color: transparent !important;
+    color: #dc3545 !important;
+    border: 1px solid #dc3545 !important;
+    font-size: 0.8rem;
 }
