@@ -136,23 +136,25 @@
         };
 
         window.downloadFile = (fileName, content) => {
-            // UTF-8のBOM付きでBlobを作成（文字化け防止とファイル識別の向上）
-            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), content], { type: 'application/gpx+xml' });
-            const url = URL.createObjectURL(blob);
+            // MIMEタイプをバイナリ（octet-stream）にすることで強制ダウンロードを促す
+            const blob = new Blob([content], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
 
             const a = document.createElement('a');
+            a.style.display = 'none';
             a.href = url;
-            a.download = fileName; // ここでファイル名を指定
+            a.setAttribute('download', fileName);
 
-            // iOS/Safariで確実に動作させるための定石
             document.body.appendChild(a);
             a.click();
 
-            // 使用後はすぐにクリーンアップ
+            // 短いディレイの後に削除
             setTimeout(() => {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
-            }, 100);
+            }, 200);
+
+            return true; // 成功をBlazorに伝える
         };
 
     </script>
