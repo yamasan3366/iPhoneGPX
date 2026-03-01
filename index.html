@@ -136,14 +136,25 @@
         };
 
         window.downloadFile = (fileName, content) => {
-            const blob = new Blob([content], { type: 'application/gpx+xml' });
+            // UTF-8のBOM付きでBlobを作成（文字化け防止とファイル識別の向上）
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), content], { type: 'application/gpx+xml' });
             const url = URL.createObjectURL(blob);
+
             const a = document.createElement('a');
-            a.href = url; a.download = fileName;
+            a.href = url;
+            a.download = fileName; // ここでファイル名を指定
+
+            // iOS/Safariで確実に動作させるための定石
             document.body.appendChild(a);
             a.click();
-            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+
+            // 使用後はすぐにクリーンアップ
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 100);
         };
+
     </script>
 </body>
 </html>
