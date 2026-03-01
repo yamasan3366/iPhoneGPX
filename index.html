@@ -157,13 +157,13 @@
             return true; // 成功をBlazorに伝える
         };
 
-        // index.html の <script> 内に追加
         window.vibrate = (ms) => {
-            if ("vibrate" in navigator) {
+            if (navigator.vibrate) {
                 navigator.vibrate(ms);
+            } else if (window.TapticEngine) { // 一部の環境用
+                window.TapticEngine.impact({ style: "medium" });
             }
         };
-
 
     </script>
 </body>
