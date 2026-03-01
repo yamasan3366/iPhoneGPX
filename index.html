@@ -40,8 +40,12 @@
                 // 1. 実績ルートの描画（実線に変更）
                 const latlngs = walkPoints.map(x => [x.lat, x.lon]);
                 if (!walkPolyline) {
-                    walkPolyline = L.polyline(latlngs, { color: 'blue', weight: 4, dashArray: null }).addTo(map);
-                } else {
+                    walkPolyline = L.polyline(latlngs, {
+                        color: 'blue',
+                        weight: 5,
+                        dashArray: null, // これで破線を解除（実線）
+                        lineJoin: 'round'
+                    }).addTo(map);                } else {
                     walkPolyline.setLatLngs(latlngs);
                 }
 
