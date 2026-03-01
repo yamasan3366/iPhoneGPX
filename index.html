@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>iPhone GPX Viewer</title>
-    <base href="/" />
+    <base href="./" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
@@ -17,69 +17,103 @@
     <script src="_framework/blazor.webassembly.js"></script>
 
     <script>
-        let map, userMarker, walkPolyline;
-        let walkPoints = [];
-        let watchId = null;
-        let isHeadUp = false;
+        // グローバル変数の初期化
+        window.map = null;
+        window.userMarker = null;
+        window.walkPolyline = null;
+        window.walkPoints = [];
+        window.watchId = null;
+        window.isHeadUpMode = false;
 
+        // Blazorから呼ばれる関数群をwindow直下に確実に配置
         window.initMap = () => {
-            if (map) return;
-            map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
+            try {
+                if (window.map) return;
 
-            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
-            const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院' });
-            std.addTo(map);
+                const mapElement = document.getElementById('map');
+                if (!mapElement) return;
 
-            L.control.zoom({ position: 'bottomright' }).addTo(map);
-            L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(map);
+                window.map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
 
-            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
+                const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+                    attribution: '国土地理院',
+                    maxZoom: 18
+                });
+                const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
+                    attribution: '国土地理院',
+                    maxZoom: 18
+                });
+
+                std.addTo(window.map);
+
+                L.control.zoom({ position: 'bottomright' }).addTo(window.map);
+                L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(window.map);
+
+                window.userMarker = L.circleMarker([0, 0], {
+                    radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2
+                }).addTo(window.map);
+
+                console.log("Map initialized successfully");
+            } catch (e) {
+                console.error("Map init error:", e);
+            }
         };
 
         window.showCurrentLocation = () => {
+            if (!window.map) return;
             navigator.geolocation.getCurrentPosition(pos => {
                 const loc = [pos.coords.latitude, pos.coords.longitude];
-                map.setView(loc, map.getZoom());
-                userMarker.setLatLng(loc);
+                window.map.setView(loc, 15);
+                window.userMarker.setLatLng(loc);
             }, err => alert("位置情報を許可してください"), { enableHighAccuracy: true });
         };
 
         window.startTracking = (dotNetObj) => {
-            if (watchId) return;
-            watchId = navigator.geolocation.watchPosition(pos => {
-                const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ele: pos.coords.altitude || 0, heading: pos.coords.heading };
-                walkPoints.push([p.lat, p.lon]);
+            if (window.watchId) return;
+            window.watchId = navigator.geolocation.watchPosition(pos => {
+                const p = {
+                    lat: pos.coords.latitude,
+                    lon: pos.coords.longitude,
+                    ele: pos.coords.altitude || 0,
+                    heading: pos.coords.heading
+                };
 
-                if (!walkPolyline) {
-                    walkPolyline = L.polyline(walkPoints, { color: 'blue', weight: 5, dashArray: null }).addTo(map);
+                window.walkPoints.push([p.lat, p.lon]);
+
+                if (!window.walkPolyline) {
+                    window.walkPolyline = L.polyline(window.walkPoints, { color: 'blue', weight: 5 }).addTo(window.map);
                 } else {
-                    walkPolyline.setLatLngs(walkPoints);
+                    window.walkPolyline.setLatLngs(window.walkPoints);
                 }
 
-                map.setView([p.lat, p.lon]);
-                userMarker.setLatLng([p.lat, p.lon]);
+                window.map.setView([p.lat, p.lon]);
+                window.userMarker.setLatLng([p.lat, p.lon]);
 
-                if (isHeadUp && p.heading !== null) {
+                if (window.isHeadUpMode && p.heading !== null) {
                     document.getElementById('map').style.transform = `rotate(${-p.heading}deg)`;
                 }
 
                 dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
-            }, null, { enableHighAccuracy: true });
+            }, err => console.error(err), { enableHighAccuracy: true });
         };
 
         window.stopTracking = () => {
-            if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+            if (window.watchId) {
+                navigator.geolocation.clearWatch(window.watchId);
+                window.watchId = null;
+            }
         };
 
         window.setHeadingMode = (val) => {
-            isHeadUp = val;
+            window.isHeadUpMode = val;
             if (!val) document.getElementById('map').style.transform = 'rotate(0deg)';
         };
 
         window.drawTrack = (pts) => {
+            if (!window.map || !pts || pts.length === 0) return;
             const latlngs = pts.map(p => [p.lat, p.lon]);
-            L.polyline(latlngs, { color: 'red', weight: 3 }).addTo(map);
-            map.fitBounds(latlngs);
+            L.polyline(latlngs, { color: 'red', weight: 3 }).addTo(window.map);
+            window.map.fitBounds(latlngs);
         };
 
         window.downloadFile = (fileName, content) => {
