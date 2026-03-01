@@ -58,15 +58,13 @@ html, body, #app {
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    height: 160px;
-    background: #ffffff !important;
+    height: 140px; /* É^ÉCÉgÉãÇè¡ÇµÇΩÇÃÇ≈è≠Çµí·Ç≠í≤êÆ */
+    background: white !important;
     z-index: 2000;
-    border-top: 1px solid #ccc;
-    padding: 10px 15px calc(env(safe-area-inset-bottom, 0px) + 10px) 15px;
+    border-top: 1px solid #ddd;
+    padding: 10px 10px calc(env(safe-area-inset-bottom, 0px) + 5px) 10px;
     display: none;
-    box-shadow: 0 -3px 10px rgba(0,0,0,0.2);
 }
-
     .elevation-chart-container.active {
         display: block !important;
     }
