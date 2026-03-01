@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* 直接ここに書いてしまうのが一番確実です */
+        #map {
+            position: absolute !important;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100vh !important;
+            width: 100vw !important;
+            background-color: #eee; /* 地図が出る前にグレーになれば枠は成功 */
+        }
+    </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>iPhone GPX Viewer</title>
