@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "u8iOP/5Y",
+  "version": "4u5Edsnl",
   "assets": [
     {
       "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
@@ -10,7 +10,7 @@ self.assetsManifest = {
       "url": "_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-sw1IRpnbrde8jjYaMEM6EWJrmbGTgp1QZCQiO+p5uNk=",
+      "hash": "sha256-StxfhezP7aFIFf7OljdAH0CYSFhn6G/oKYfUaIDgQrU=",
       "url": "_framework/Microsoft.AspNetCore.Components.wasm"
     },
     {
@@ -110,7 +110,7 @@ self.assetsManifest = {
       "url": "_framework/System.ObjectModel.wasm"
     },
     {
-      "hash": "sha256-uK0mom3kzXzN3wj1PucPddPCq83qJMUjOmbxVg5NLiU=",
+      "hash": "sha256-PybrydL3Gvw5Tk2QR9O2c4Uyk6FJMOs5QZyqWlFas94=",
       "url": "_framework/System.Private.CoreLib.wasm"
     },
     {
@@ -130,7 +130,7 @@ self.assetsManifest = {
       "url": "_framework/System.Runtime.InteropServices.JavaScript.wasm"
     },
     {
-      "hash": "sha256-Sa5EVaoVeLV3crU514ERXbFl/Heup/4qWhVTuGhsC/A=",
+      "hash": "sha256-mJ+EJHh/sZ0HbPbpZtdu6pEOz51hSBpp9t+oQ62obNk=",
       "url": "_framework/System.Runtime.wasm"
     },
     {
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-+W4fkro8agWVFzkuimxqxVc3TJGDokaqmCpqkTvRzQU=",
+      "hash": "sha256-9ehCjUtMCbTMIlnfp0lyGHep65GjM1hSVzJBTxHJTwQ=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-kpEjBLrfY+1/mQOCpNEby1iShl83EiS/RPqcJhp1EVM=",
+      "hash": "sha256-VdqJYKpEfkT4zMkZltPc9chaRE2N+Bx+iXcY4882mRI=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
@@ -194,7 +194,7 @@ self.assetsManifest = {
       "url": "_framework/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-gg8e9g+hjGOJI+XWk94Xp8TsRuC2+gm22hy4U8bG0RU=",
+      "hash": "sha256-rDfXbOsI8xNQm8M3VKR6Zlnm+qb3qrAP2e23FPTo8l0=",
       "url": "css/app.css"
     },
     {
@@ -222,8 +222,12 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-+Quxyuw2w8mo8iVQkCbMev5tuPqSvSsHRCf+bg7UOdc=",
+      "hash": "sha256-XIMR5J5jfoq2Bmj5xRCesrFGeThXtKzi82P0VnABFes=",
       "url": "index.html"
+    },
+    {
+      "hash": "sha256-GZucBY1/kqJ4wUbSd+ICyFHpv0SD69Evre+fp5ckB7I=",
+      "url": "manifest.json"
     },
     {
       "hash": "sha256-ROGSUpbHI0y4i5UCKtCAEaABm208kXualcauyD7NSDk=",

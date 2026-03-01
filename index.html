@@ -18,44 +18,61 @@
         let walkPoints = []; // 実績ルートの座標
         let walkPolyline = null; // 実績ルートの線（青）
 
+        // index.html の script 部分を更新
+        let isAutoScroll = true; // 自動スクロール有効
+        let mapRotation = 0;    // 現在の回転角
+
         window.startTracking = (dotNetObj) => {
             if (watchId) return;
 
-            // 高精度モードかつ電池消費を抑える設定
-            const options = {
-                enableHighAccuracy: true, // GPSを優先
-                timeout: 10000,
-                maximumAge: 0
-            };
+            const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
 
             watchId = navigator.geolocation.watchPosition(pos => {
                 const p = {
                     lat: pos.coords.latitude,
                     lon: pos.coords.longitude,
                     ele: pos.coords.altitude || 0,
-                    time: new Date().toISOString()
+                    heading: pos.coords.heading // 進行方向を取得
                 };
 
-                // 1. データを配列に追加
                 walkPoints.push(p);
 
-                // 2. 地図上に青い線を描画
+                // 1. 実績ルートの描画（実線に変更）
                 const latlngs = walkPoints.map(x => [x.lat, x.lon]);
                 if (!walkPolyline) {
-                    walkPolyline = L.polyline(latlngs, { color: 'blue', weight: 4, dashArray: '5, 10' }).addTo(map);
+                    walkPolyline = L.polyline(latlngs, { color: 'blue', weight: 4, dashArray: null }).addTo(map);
                 } else {
                     walkPolyline.setLatLngs(latlngs);
                 }
 
-                // 3. 現在地アイコンの更新
-                if (userMarker) userMarker.setLatLng([p.lat, p.lon]);
-                else userMarker = L.circleMarker([p.lat, p.lon], { color: 'blue', radius: 8 }).addTo(map);
+                // 2. 自動スクロール（現在地を画面中央へ）
+                if (isAutoScroll) {
+                    map.setView([p.lat, p.lon], map.getZoom(), { animate: true });
+                }
 
-                // 4. C#側にデータを送って保存・計算させる
+                // 3. ヘッドアップ処理（進行方向が有効な場合）
+                if (window.isHeadUp && p.heading !== null) {
+                    updateMapRotation(-p.heading);
+                }
+
+                if (userMarker) userMarker.setLatLng([p.lat, p.lon]);
                 dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
 
             }, err => console.error(err), options);
         };
+
+        // 地図を回転させる関数
+        window.setHeadingMode = (isHeadUp) => {
+            window.isHeadUp = isHeadUp;
+            if (!isHeadUp) updateMapRotation(0); // ノースアップに戻す
+        };
+
+        function updateMapRotation(deg) {
+            const mapContainer = document.getElementById('map');
+            mapContainer.style.transform = `rotate(${deg}deg)`;
+            // アイコンや文字が逆さまにならないよう、中身を逆回転させる対策が必要な場合はここに追加
+        }
+
 
         window.stopTracking = () => {
             if (watchId) {
@@ -118,5 +135,11 @@
 <body>
     <div id="app">読み込み中...</div>
     <script src="_framework/blazor.webassembly.js"></script>
+    
+    <script>
+        if ('service-worker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
 </body>
 </html>
