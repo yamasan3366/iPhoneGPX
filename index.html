@@ -82,33 +82,38 @@
             }, err => alert("位置情報を許可してください"), { enableHighAccuracy: true });
         };
 
+        let currentSegmentPolyline = null; // 現在のセグメント用の線
+
+        window.clearWalkPolyline = () => {
+            // 記録した青い線をすべて地図から削除
+            // walkPointsをリセット
+            window.walkPoints = [];
+            // 地図上の全ての青い線を消す（クラス名などで判定するか、管理用配列を回す）
+            map.eachLayer(layer => {
+                if (layer instanceof L.Polyline && layer.options.color === 'blue') {
+                    map.removeLayer(layer);
+                }
+            });
+            currentSegmentPolyline = null;
+        };
+
         window.startTracking = (dotNetObj) => {
             if (window.watchId) return;
+
+            // 開始時に新しいポリラインを作成（これで前の線と繋がらない）
+            currentSegmentPolyline = L.polyline([], { color: 'blue', weight: 5 }).addTo(map);
+
             window.watchId = navigator.geolocation.watchPosition(pos => {
-                const p = {
-                    lat: pos.coords.latitude,
-                    lon: pos.coords.longitude,
-                    ele: pos.coords.altitude || 0,
-                    heading: pos.coords.heading
-                };
+                const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ele: pos.coords.altitude || 0 };
 
-                window.walkPoints.push([p.lat, p.lon]);
+                // 現在のセグメントにのみ点を追加
+                currentSegmentPolyline.addLatLng([p.lat, p.lon]);
 
-                if (!window.walkPolyline) {
-                    window.walkPolyline = L.polyline(window.walkPoints, { color: 'blue', weight: 5 }).addTo(window.map);
-                } else {
-                    window.walkPolyline.setLatLngs(window.walkPoints);
-                }
-
-                window.map.setView([p.lat, p.lon]);
-                window.userMarker.setLatLng([p.lat, p.lon]);
-
-                if (window.isHeadUpMode && p.heading !== null) {
-                    document.getElementById('map').style.transform = `rotate(${-p.heading}deg)`;
-                }
+                map.setView([p.lat, p.lon]);
+                userMarker.setLatLng([p.lat, p.lon]);
 
                 dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
-            }, err => console.error(err), { enableHighAccuracy: true });
+            }, null, { enableHighAccuracy: true });
         };
 
         window.stopTracking = () => {
