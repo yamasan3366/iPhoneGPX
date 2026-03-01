@@ -167,6 +167,17 @@
                 userMarker = L.circleMarker([lat, lon], { color: 'blue', radius: 8, fillOpacity: 0.8 }).addTo(map);
             }, err => alert("位置情報取得失敗"), { enableHighAccuracy: true });
         };
+
+        window.downloadFile = (fileName, content) => {
+            const blob = new Blob([content], { type: 'application/gpx+xml' });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = fileName;
+            anchor.click();
+            URL.revokeObjectURL(url);
+        };
+
     </script>
 </head>
 <body>
