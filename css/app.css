@@ -173,29 +173,31 @@ html, body, #app {
 }
 
 /* メニューパネル（右側からシュッと出るイメージ） */
+/* サイドメニューのスタイル強化 */
 .side-menu-panel {
     position: absolute;
     top: 70px;
     right: 15px;
-    width: 220px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
-    padding: 20px;
+    width: 240px;
+    background: white !important; /* 透明度を下げてPCでの視認性を確保 */
+    padding: 15px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    z-index: 3000;
-    border: 1px solid #ddd;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    z-index: 5000 !important; /* Leaflet(1000)や他のボタン(3000)より上に */
+    border: 1px solid #ccc;
+    pointer-events: auto; /* クリックを確実に受け取る */
 }
 
+/* メニュー内のボタンを押しやすく */
 .menu-item {
-    display: block;
-    padding: 10px;
-    background: #007bff;
-    color: white;
-    border-radius: 6px;
-    text-align: center;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    font-weight: bold;
 }
+
 
 /* ボタン群の配置（左端から並べる） */
 .floating-controls {
