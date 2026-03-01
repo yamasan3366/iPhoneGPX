@@ -168,26 +168,34 @@
             }, err => alert("位置情報取得失敗"), { enableHighAccuracy: true });
         };
 
-        window.downloadFile = (fileName, content) => {
-            try {
-                const blob = new Blob([content], { type: 'application/gpx+xml' });
-                const url = window.URL.createObjectURL(blob);
-                const anchor = document.createElement('a');
-
-                anchor.style.display = 'none';
-                anchor.href = url;
-                anchor.download = fileName;
-
-                document.body.appendChild(anchor); // 一旦bodyに追加
-                anchor.click(); // クリック実行
-
-                setTimeout(() => {
-                    document.body.removeChild(anchor);
-                    window.URL.revokeObjectURL(url);
-                }, 100);
-            } catch (e) {
-                alert("保存に失敗しました: " + e.message);
+        window.showCurrentLocation = () => {
+            if (!map || !userMarker) {
+                console.error("Map or Marker not initialized");
+                return;
             }
+
+            navigator.geolocation.getCurrentPosition(pos => {
+                const latlng = [pos.coords.latitude, pos.coords.longitude];
+                map.setView(latlng, map.getZoom());
+                userMarker.setLatLng(latlng);
+            }, err => {
+                alert("位置情報の取得に失敗しました。設定を確認してください。");
+            }, { enableHighAccuracy: true });
+        };
+
+        // ダウンロード関数の再定義（iPhoneでの確実な動作のため）
+        window.downloadFile = (fileName, content) => {
+            const blob = new Blob([content], { type: 'application/gpx+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 1000);
         };
 
     </script>
