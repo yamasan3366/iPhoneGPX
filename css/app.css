@@ -128,3 +128,14 @@ html, body, #app, #map {
     pointer-events: auto;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
+/* 記録ボタン内のアイコンにアニメーションを追加 */
+.rec-start-icon {
+    transition: transform 0.2s ease-out;
+}
+
+/* 長押し中（isPressing=true時）のスタイル */
+.rec-btn-pressing .rec-start-icon {
+    transform: scale(1.5); /* 1.5倍に膨らむ */
+    background: #ff6666; /* 少し明るい赤に */
+}

@@ -157,6 +157,14 @@
             return true; // 成功をBlazorに伝える
         };
 
+        // index.html の <script> 内に追加
+        window.vibrate = (ms) => {
+            if ("vibrate" in navigator) {
+                navigator.vibrate(ms);
+            }
+        };
+
+
     </script>
 </body>
 </html>
