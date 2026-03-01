@@ -3,211 +3,94 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>GPX Viewer</title>
-    <base href="/iPhoneGPX/" />
-    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <title>iPhone GPX Viewer</title>
+    <base href="/" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link href="css/app.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="app">読み込み中...</div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+
     <script>
-        let map, polyline, userMarker;
-
-        // index.html の script 部分を更新
+        let map, userMarker, walkPolyline;
+        let walkPoints = [];
         let watchId = null;
-        let walkPoints = []; // 実績ルートの座標
-        let walkPolyline = null; // 実績ルートの線（青）
-
-        // index.html の script 部分を更新
-        let isAutoScroll = true; // 自動スクロール有効
-        let mapRotation = 0;    // 現在の回転角
-
-        window.startTracking = (dotNetObj) => {
-            if (watchId) return;
-
-            const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
-
-            watchId = navigator.geolocation.watchPosition(pos => {
-                const current = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-
-                // 省電力ロジック：移動距離が極めて小さいか判定
-                if (lastPos) {
-                    const d = getDistance(lastPos.lat, lastPos.lon, current.lat, current.lon);
-                    if (d < 0.005) { // 5メートル以下の移動
-                        if (!idleStartTime) idleStartTime = Date.now();
-
-                        // 10分以上停滞していたら
-                        if (Date.now() - idleStartTime > 600000) {
-                            // ブラウザ通知や警告を出す（ここでは簡略化してログのみ）
-                            console.log("長時間停滞中：GPS消費を抑える検討");
-                        }
-                    } else {
-                        idleStartTime = null; // 移動を検知したらリセット
-                    }
-                }
-                lastPos = current;
-
-                const p = {
-                    lat: pos.coords.latitude,
-                    lon: pos.coords.longitude,
-                    ele: pos.coords.altitude || 0,
-                    heading: pos.coords.heading // 進行方向を取得
-                };
-
-                walkPoints.push(p);
-
-                // 1. 実績ルートの描画（実線に変更）
-                const latlngs = walkPoints.map(x => [x.lat, x.lon]);
-                if (!walkPolyline) {
-                    walkPolyline = L.polyline(latlngs, {
-                        color: 'blue',
-                        weight: 5,
-                        dashArray: null, // これで破線を解除（実線）
-                        lineJoin: 'round'
-                    }).addTo(map);                } else {
-                    walkPolyline.setLatLngs(latlngs);
-                }
-
-                // 2. 自動スクロール（現在地を画面中央へ）
-                if (isAutoScroll) {
-                    map.setView([p.lat, p.lon], map.getZoom(), { animate: true });
-                }
-
-                // 3. ヘッドアップ処理（進行方向が有効な場合）
-                if (window.isHeadUp && p.heading !== null) {
-                    updateMapRotation(-p.heading);
-                }
-
-                if (userMarker) userMarker.setLatLng([p.lat, p.lon]);
-                dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
-
-
-
-            }, err => console.error(err), options);
-        };
-
-        // 距離計算用のヘルパー
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        }
-
-
-        // 地図を回転させる関数
-        window.setHeadingMode = (isHeadUp) => {
-            window.isHeadUp = isHeadUp;
-            if (!isHeadUp) updateMapRotation(0); // ノースアップに戻す
-        };
-
-        function updateMapRotation(deg) {
-            const mapContainer = document.getElementById('map');
-            mapContainer.style.transform = `rotate(${deg}deg)`;
-            // アイコンや文字が逆さまにならないよう、中身を逆回転させる対策が必要な場合はここに追加
-        }
-
-
-        window.stopTracking = () => {
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-        };
-
+        let isHeadUp = false;
 
         window.initMap = () => {
             if (map) return;
-
-            map = L.map('map', {
-                center: [35.68, 139.76],
-                zoom: 13,
-                zoomControl: false // 標準の左上ボタンを確実にOFF
-            });
+            map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
 
             const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
             const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院' });
             std.addTo(map);
 
-            // ズームボタンを先に追加（一番下に来る）
             L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-            // レイヤーボタンを次に追加（ズームの上に来る）
             L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(map);
-        };
 
-
-        window.drawTrack = (points) => {
-            if (!map) {
-                window.initMap();
-                setTimeout(() => window.drawTrack(points), 200);
-                return;
-            }
-
-            if (polyline) map.removeLayer(polyline);
-            if (!points || points.length === 0) return;
-
-            const latlngs = points.map(p => [p.lat, p.lon]);
-            polyline = L.polyline(latlngs, { color: 'red', weight: 5, opacity: 0.8 }).addTo(map);
-
-            setTimeout(() => {
-                try { map.fitBounds(polyline.getBounds(), { padding: [20, 20] }); } catch (e) { }
-            }, 100);
-        };
-
-        window.getLocation = () => {
-            if (!map || !navigator.geolocation) return;
-            navigator.geolocation.getCurrentPosition(pos => {
-                const lat = pos.coords.latitude, lon = pos.coords.longitude;
-                map.setView([lat, lon], 15);
-                if (userMarker) map.removeLayer(userMarker);
-                userMarker = L.circleMarker([lat, lon], { color: 'blue', radius: 8, fillOpacity: 0.8 }).addTo(map);
-            }, err => alert("位置情報取得失敗"), { enableHighAccuracy: true });
+            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
         };
 
         window.showCurrentLocation = () => {
-            if (!map || !userMarker) {
-                console.error("Map or Marker not initialized");
-                return;
-            }
-
             navigator.geolocation.getCurrentPosition(pos => {
-                const latlng = [pos.coords.latitude, pos.coords.longitude];
-                map.setView(latlng, map.getZoom());
-                userMarker.setLatLng(latlng);
-            }, err => {
-                alert("位置情報の取得に失敗しました。設定を確認してください。");
-            }, { enableHighAccuracy: true });
+                const loc = [pos.coords.latitude, pos.coords.longitude];
+                map.setView(loc, map.getZoom());
+                userMarker.setLatLng(loc);
+            }, err => alert("位置情報を許可してください"), { enableHighAccuracy: true });
         };
 
-        // ダウンロード関数の再定義（iPhoneでの確実な動作のため）
+        window.startTracking = (dotNetObj) => {
+            if (watchId) return;
+            watchId = navigator.geolocation.watchPosition(pos => {
+                const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ele: pos.coords.altitude || 0, heading: pos.coords.heading };
+                walkPoints.push([p.lat, p.lon]);
+
+                if (!walkPolyline) {
+                    walkPolyline = L.polyline(walkPoints, { color: 'blue', weight: 5, dashArray: null }).addTo(map);
+                } else {
+                    walkPolyline.setLatLngs(walkPoints);
+                }
+
+                map.setView([p.lat, p.lon]);
+                userMarker.setLatLng([p.lat, p.lon]);
+
+                if (isHeadUp && p.heading !== null) {
+                    document.getElementById('map').style.transform = `rotate(${-p.heading}deg)`;
+                }
+
+                dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
+            }, null, { enableHighAccuracy: true });
+        };
+
+        window.stopTracking = () => {
+            if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+        };
+
+        window.setHeadingMode = (val) => {
+            isHeadUp = val;
+            if (!val) document.getElementById('map').style.transform = 'rotate(0deg)';
+        };
+
+        window.drawTrack = (pts) => {
+            const latlngs = pts.map(p => [p.lat, p.lon]);
+            L.polyline(latlngs, { color: 'red', weight: 3 }).addTo(map);
+            map.fitBounds(latlngs);
+        };
+
         window.downloadFile = (fileName, content) => {
             const blob = new Blob([content], { type: 'application/gpx+xml' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
+            a.href = url; a.download = fileName;
             document.body.appendChild(a);
             a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            }, 1000);
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
         };
-
-    </script>
-</head>
-<body>
-    <div id="app">読み込み中...</div>
-    <script src="_framework/blazor.webassembly.js"></script>
-    
-    <script>
-        if ('service-worker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
     </script>
 </body>
 </html>

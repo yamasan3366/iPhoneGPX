@@ -1,229 +1,102 @@
-html, body, #app {
+html, body, #app, #map {
     height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
-    width: 100%;
     overflow: hidden;
 }
 
-#map {
-    height: 100vh !important;
-    width: 100vw !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    transition: transform 0.5s ease; /* 回転を滑らかに */
-}
-
+/* 上部ボタン群: 左端に寄せる */
 .floating-controls {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0px) + 10px);
-    /* 左端からの距離をギュッと縮めて、全体を左に寄せます */
     left: 15px !important;
-    /* 右側のはみ出しを防ぐためのガード */
-    right: auto !important;
     z-index: 1000;
     display: flex;
-    flex-direction: row;
-    gap: 6px;
+    gap: 12px;
     pointer-events: none;
 }
-    .floating-controls > * {
-        pointer-events: auto;
-    }
 
-.nav-btn {
-    width: 35px;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+.action-btn, .rec-btn-container {
+    pointer-events: auto;
 }
 
-.action-btn {
-    width: 46px;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-/* 縦向き（デフォルト）の高さ */
-.elevation-chart-container {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    height: 140px; /* 縦向き */
-    background: white !important;
-    z-index: 2000;
-    border-top: 1px solid #ddd;
-    padding: 10px 10px calc(env(safe-area-inset-bottom, 0px) + 5px) 10px;
-    display: none;
-}
-
-/* iPhoneを横向きにした時の高さ制限 */
-@media screen and (orientation: landscape) {
-    .elevation-chart-container {
-        height: 100px !important; /* 横向き時は低くして地図を広く */
-        padding-top: 5px !important;
-    }
-
-        .elevation-chart-container div[style*="height:110px"] {
-            height: 70px !important; /* グラフエリア自体の高さも下げる */
-        }
-}
-
-.elevation-chart-container.active {
-    display: block !important;
-}
-
-
-/* 右下エリア全体の持ち上げを一旦リセット */
-.leaflet-right.leaflet-bottom {
-    bottom: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* クレジット（文字）を最下部に固定し、背景を少し透過させる */
-.leaflet-control-attribution {
-    margin: 0 !important;
-    padding: 2px 5px !important;
-    background: rgba(255, 255, 255, 0.5) !important;
-    font-size: 9px !important;
-    line-height: 10px !important;
-    /* 標高グラフの下に潜り込ませるか、グラフの隙間に置く */
-    position: fixed !important;
-    bottom: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-}
-
-/* ズームボタンとレイヤーボタン「だけ」を個別に浮かせる */
-.leaflet-control-zoom, .leaflet-control-layers {
-    /* 標高グラフ(160px) + 余白(10px) 分、上に強制移動 */
-    position: relative !important;
-    bottom: calc(160px + env(safe-area-inset-bottom, 0px) + 10px) !important;
-    right: 10px !important;
-    margin-bottom: 10px !important; /* ボタン同士の間隔 */
-}
-
-/* ボタン同士の隙間を固定 */
-.leaflet-control {
-    margin: 4px 0 !important; /* 上下の隙間を一定にする */
-}
-
-/* 軌跡の実線（青）をより強調 */
-.leaflet-interactive {
-    stroke-linejoin: round;
-    stroke-linecap: round;
-}
-
-
-/* 記録ボタンのデザイン（再定義） */
+/* 記録ボタンのデザイン */
 .rec-btn-container {
     width: 46px;
     height: 46px;
+    background: white;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    border-radius: 50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     border: 2px solid #ccc;
 }
 
 .rec-start-icon {
-    width: 22px;
-    height: 22px;
-    background-color: #ff3b30;
+    width: 20px;
+    height: 20px;
+    background: red;
     border-radius: 50%;
 }
 
 .rec-stop-icon {
-    width: 18px;
-    height: 18px;
-    background-color: #ff3b30;
-    border-radius: 3px;
+    width: 16px;
+    height: 16px;
+    background: red;
+    border-radius: 2px;
 }
 
-/* 記録中の点滅アニメーション（任意） */
-@keyframes blink {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-.recording-active {
-    animation: blink 2s infinite;
-}
-
-/* メニューパネル（右側からシュッと出るイメージ） */
-/* サイドメニューのスタイル強化 */
+/* サイドメニュー */
 .side-menu-panel {
     position: absolute;
     top: 70px;
     right: 15px;
-    width: 240px;
-    background: white !important; /* 透明度を下げてPCでの視認性を確保 */
-    padding: 15px;
+    width: 250px;
+    background: white;
+    padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    z-index: 5000 !important; /* Leaflet(1000)や他のボタン(3000)より上に */
-    border: 1px solid #ccc;
-    pointer-events: auto; /* クリックを確実に受け取る */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 5000;
 }
 
-/* メニュー内のボタンを押しやすく */
-.menu-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    height: 44px;
-    font-weight: bold;
+/* 標高グラフ */
+.elevation-chart-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 140px;
+    background: white;
+    z-index: 2000;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    display: none;
 }
 
+    .elevation-chart-container.active {
+        display: block;
+    }
 
-/* ボタン群の配置（左端から並べる） */
-.floating-controls {
+@media screen and (orientation: landscape) {
+    .elevation-chart-container {
+        height: 90px;
+    }
+}
+
+.distance-axis {
     position: absolute;
-    top: calc(env(safe-area-inset-top, 0px) + 10px);
-    left: 15px !important;
-    z-index: 1000;
+    bottom: 0;
+    width: 100%;
     display: flex;
-    flex-direction: row;
-    gap: 12px; /* ボタン同士を少し離して誤タップ防止 */
-    pointer-events: none;
+    justify-content: space-between;
+    font-size: 9px;
+    padding: 0 5px;
+    background: rgba(255,255,255,0.7);
 }
 
-/* 保存ボタン：目立つように */
-.btn-export {
-    background-color: #007bff !important;
-    color: white !important;
-    font-weight: bold;
-    height: 50px;
-    margin-top: 10px;
-}
-
-/* 消去ボタン：誤操作を防ぐためにマージンを空け、少し小さく */
-.btn-clear-log {
-    margin-top: 30px !important; /* 保存ボタンから大きく離す */
-    background-color: transparent !important;
-    color: #dc3545 !important;
-    border: 1px solid #dc3545 !important;
-    font-size: 0.8rem;
+/* クレジットを最下部に */
+.leaflet-control-attribution {
+    font-size: 8px !important;
 }
