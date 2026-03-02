@@ -37,14 +37,16 @@
     }
 
 /* ボタン配列：縦並び・特大サイズ */
+/* ボタンコンテナを最前面に */
 .floating-controls {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 20px);
     left: 20px;
-    z-index: 1000;
+    z-index: 10000; /* 十分に高い値に設定 */
     display: flex;
     flex-direction: column;
     gap: 15px;
+    pointer-events: auto; /* 確実にクリックを通す */
 }
 
 /* ボタン共通：60pxの特大サイズ */
@@ -58,6 +60,9 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
     border: none !important;
     padding: 0 !important;
+    pointer-events: auto !important;
+    cursor: pointer;
+    z-index: 10001;
 }
 
     /* アイコンをボタンいっぱいに表示 */
@@ -78,6 +83,20 @@
 .btn-rec-stop {
     background: #dc3545 !important;
     color: white !important;
+}
+
+/* サイドメニュー（ここがボタンよりさらに上に来るように） */
+.side-menu-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 280px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 20000; /* 最前面 */
+    display: block;
 }
 
 /* 標高グラフ */
