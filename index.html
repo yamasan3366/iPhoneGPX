@@ -76,9 +76,9 @@
                 if (layer instanceof L.Polyline && layer.options.color === 'red') map.removeLayer(layer);
             });
             const latlngs = pts.map(p => [p.lat, p.lon]);
-            const route = L.polyline(latlngs, { color: 'red', weight: 4, dashArray: '5, 10' }).addTo(map);
+            // dashArrayを削除して実線に
+            const route = L.polyline(latlngs, { color: 'red', weight: 4 }).addTo(map);
 
-            // 確実に描画させてからズーム
             setTimeout(() => {
                 map.invalidateSize();
                 map.fitBounds(route.getBounds(), { padding: [40, 40] });
