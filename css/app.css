@@ -85,18 +85,54 @@
     color: white !important;
 }
 
-/* サイドメニュー（ここがボタンよりさらに上に来るように） */
+/* サイドメニュー：2/3サイズに凝縮 */
 .side-menu-panel {
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 280px;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    z-index: 20000; /* 最前面 */
-    display: block;
+    width: 180px; /* 幅を260pxから180pxに短縮 */
+    background: rgba(255, 255, 255, 0.95); /* 少し透過させて地図を見やすく */
+    padding: 10px; /* 余白を最小限に */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 20000;
+}
+
+    /* メニュー内の各要素の余白を詰める */
+    .side-menu-panel b {
+        font-size: 14px;
+    }
+
+    .side-menu-panel .btn-close {
+        scale: 0.8;
+    }
+    /* 閉じるボタンを小さく */
+
+    .side-menu-panel .btn {
+        font-size: 12px !important; /* 文字を小さく */
+        padding: 5px 2px !important; /* ボタン内の余白を極小に */
+        height: auto !important;
+    }
+
+/* 戻る・進むボタンのエリア */
+.nav-btn-group {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px !important;
+}
+
+/* ログ保存ボタン（少しだけ目立たせるが高さは抑える） */
+.btn-export-compact {
+    height: 38px !important;
+    line-height: 28px;
+    font-weight: bold;
+    margin-bottom: 8px !important;
+}
+
+/* ログのみ消去ボタン */
+.btn-clear-compact {
+    font-size: 11px !important;
+    padding: 3px !important;
 }
 
 /* 標高グラフ */
