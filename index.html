@@ -50,19 +50,24 @@
 
 
 
+        // 明示的にfalse(ノースアップ)から開始
         let isHeadUp = false;
         let lastLat = null, lastLon = null;
 
         window.toggleHeadingMode = () => {
-            isHeadUp = !isHeadUp;
+            isHeadUp = !isHeadUp; // true ↔ false 切り替え
+
             if (!isHeadUp) {
-                // 確実に回転を0（北上）に戻し、アニメーションを止める
+                // ノースアップに戻すときは即座に0度へ
                 map.setBearing(0);
+                lastLat = null; // 位置参照もリセット
+                lastLon = null;
             }
+            // Blazor側に現在の状態(true=ヘッド, false=ノース)を返す
             return isHeadUp;
         };
 
-        // startTracking内の位置更新処理を修正
+        // startTracking内の回転ロジック
         window.startTracking = (dotNetObj) => {
             if (watchId) return;
             currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
@@ -71,22 +76,23 @@
                 const lon = pos.coords.longitude;
                 const p = { lat: lat, lon: lon, ele: pos.coords.altitude || 0 };
 
-                // ヘッドアップ（進行方向上）の計算
+                // ヘッドアップモードかつ、前回の地点がある場合のみ回転
                 if (isHeadUp && lastLat !== null) {
-                    const y = Math.sin(lon - lastLon) * Math.Cos(lat);
-                    const x = Math.Cos(lastLat) * Math.Sin(lat) - Math.Sin(lastLat) * Math.Cos(lat) * Math.Cos(lon - lastLon);
+                    const y = Math.sin(lon - lastLon) * Math.cos(lat);
+                    const x = Math.cos(lastLat) * Math.sin(lat) - Math.sin(lastLat) * Math.cos(lat) * Math.cos(lon - lastLon);
                     const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
                     map.setBearing(bearing);
                 }
-                lastLat = lat; lastLon = lon;
 
+                lastLat = lat; lastLon = lon;
                 currentWalkPolyline.addLatLng([lat, lon]);
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
                 dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
             }, null, { enableHighAccuracy: true });
         };
-        
+
+
         window.stopTracking = () => {
             if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
         };
