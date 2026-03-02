@@ -48,18 +48,44 @@
             }, null, { enableHighAccuracy: true });
         };
 
+
+
+        let isHeadUp = false;
+        let lastLat = null, lastLon = null;
+
+        window.toggleHeadingMode = () => {
+            isHeadUp = !isHeadUp;
+            if (!isHeadUp) {
+                map.setBearing(0); // ノースアップに戻す
+            }
+            return isHeadUp;
+        };
+
+        // startTracking内の位置更新処理を修正
         window.startTracking = (dotNetObj) => {
             if (watchId) return;
             currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
             watchId = navigator.geolocation.watchPosition(pos => {
-                const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ele: pos.coords.altitude || 0 };
-                currentWalkPolyline.addLatLng([p.lat, p.lon]);
-                map.setView([p.lat, p.lon]);
-                userMarker.setLatLng([p.lat, p.lon]);
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const p = { lat: lat, lon: lon, ele: pos.coords.altitude || 0 };
+
+                // ヘッドアップ（進行方向上）の計算
+                if (isHeadUp && lastLat !== null) {
+                    const y = Math.sin(lon - lastLon) * Math.Cos(lat);
+                    const x = Math.Cos(lastLat) * Math.Sin(lat) - Math.Sin(lastLat) * Math.Cos(lat) * Math.Cos(lon - lastLon);
+                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+                    map.setBearing(bearing);
+                }
+                lastLat = lat; lastLon = lon;
+
+                currentWalkPolyline.addLatLng([lat, lon]);
+                map.setView([lat, lon]);
+                userMarker.setLatLng([lat, lon]);
                 dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
             }, null, { enableHighAccuracy: true });
         };
-
+        
         window.stopTracking = () => {
             if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
         };
