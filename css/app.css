@@ -1,138 +1,96 @@
-html, body, #app, #map {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+/* 地図の強制全画面表示 */
+#map {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100vh !important;
+    width: 100vw !important;
+    background: #ddd; /* 地図が出ない時グレーになるか確認用 */
+    z-index: 1;
 }
 
-/* ログ記録中ラベル（点滅なし） */
+/* 記録中ラベル：画面中央上部 */
 .recording-status {
     position: fixed;
-    top: 12px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(220, 53, 69, 0.95);
     color: white;
-    padding: 6px 16px;
-    border-radius: 20px;
+    padding: 8px 20px;
+    border-radius: 25px;
     font-weight: bold;
-    font-size: 14px;
-    z-index: 5000;
+    z-index: 9999;
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
 
     .recording-status .dot {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
         background: white;
         border-radius: 50%;
     }
 
+/* ボタン配列：縦並び・特大サイズ */
 .floating-controls {
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 10px);
-    left: 15px;
+    top: calc(env(safe-area-inset-top, 0px) + 20px);
+    left: 20px;
     z-index: 1000;
     display: flex;
-    flex-direction: column; /* 縦並び */
-    gap: 10px;
-}
-
-/* 共通ボタンサイズ */
-.action-btn, .btn-rec-start, .btn-rec-stop {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px; /* 少し角丸に */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-    border: none;
-    font-size: 18px;
-}
-
-/* 記録開始・停止ボタンのテキストをアイコンのみにするか、小さくする */
-.btn-rec-start, .btn-rec-stop {
-    font-size: 14px;
     flex-direction: column;
+    gap: 15px;
 }
 
-.recording-status {
-    position: fixed;
-    top: 12px;
-    left: 80px; /* ボタンと被らないよう左に寄せる */
-    background: rgba(220, 53, 69, 0.9);
-    color: white;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    z-index: 5000;
+/* ボタン共通：60pxの特大サイズ */
+.action-btn, .btn-rec-start, .btn-rec-stop {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
+    border: none !important;
+    padding: 0 !important;
 }
 
-/*.btn-rec-start {
-    background: #28a745;
-    color: white;
-    border: none;
-    height: 46px;
-    border-radius: 23px;
-    font-weight: bold;
-    padding: 0 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    /* アイコンをボタンいっぱいに表示 */
+    .action-btn i, .btn-rec-start i, .btn-rec-stop i {
+        font-size: 32px !important;
+    }
+
+.btn-rec-start {
+    background: #28a745 !important;
+    color: white !important;
 }
 
     .btn-rec-start.disabled {
         background: #6c757d !important;
-        opacity: 0.5;
-        color: #eee;
+        opacity: 0.4;
     }
 
 .btn-rec-stop {
-    background: #dc3545;
-    color: white;
-    border: none;
-    height: 46px;
-    border-radius: 23px;
-    font-weight: bold;
-    padding: 0 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-*/
-.action-btn {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    background: #dc3545 !important;
+    color: white !important;
 }
 
 /* 標高グラフ */
-/* 標高情報の表示位置（グラフの右上外側） */
-.elevation-info-top {
-    position: absolute;
-    top: -22px;
-    right: 5px;
-    font-size: 11px;
-    font-weight: bold;
-    color: #333;
-    background: rgba(255,255,255,0.7);
-    padding: 2px 5px;
-    border-radius: 4px;
-}
-
-/* 標高グラフコンテナの調整 */
 .elevation-chart-container {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 150px;
-    background: white;
+    height: 160px;
+    background: rgba(255,255,255,0.95);
     z-index: 2000;
-    border-top: 1px solid #ddd;
-    padding: 25px 10px 10px 10px; /* 上部に文字用のスペースを確保 */
+    border-top: 2px solid #ccc;
+    padding: 30px 15px 10px 15px;
     display: none;
 }
 
@@ -140,15 +98,11 @@ html, body, #app, #map {
         display: block;
     }
 
-
-.side-menu-panel {
-    position: fixed;
-    top: 70px;
+.elevation-info-top {
+    position: absolute;
+    top: 5px;
     right: 15px;
-    width: 260px;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    z-index: 5000;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
 }

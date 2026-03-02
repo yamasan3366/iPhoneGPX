@@ -1,16 +1,16 @@
 self.assetsManifest = {
-  "version": "5C9Qw+r9",
+  "version": "LHSP2HLv",
   "assets": [
     {
-      "hash": "sha256-9bI8+aMnDSEbzjcXzrVU0tTnl1CxrO3aFPMqO0lB7Pw=",
+      "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
       "url": "_framework/Microsoft.AspNetCore.Components.Web.wasm"
     },
     {
-      "hash": "sha256-pJN9OZzhdw9H6UD2cenyYZL0Bn1Iua2pt2+j2Os+FPg=",
+      "hash": "sha256-mQuneeAeWDrcjGuNard1yrBeC94E2PlOZXHG84WqvfY=",
       "url": "_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-+2/5PPZki3fL0YDCEPSo/AE0mjv+8x/qPjatJl4a2Kg=",
+      "hash": "sha256-sw1IRpnbrde8jjYaMEM6EWJrmbGTgp1QZCQiO+p5uNk=",
       "url": "_framework/Microsoft.AspNetCore.Components.wasm"
     },
     {
@@ -54,7 +54,7 @@ self.assetsManifest = {
       "url": "_framework/Microsoft.JSInterop.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-FnW9H7QgMjAavcxrron/eB2w4FPL8Fp2ur7HN8AyGSQ=",
+      "hash": "sha256-4Wh8oIVfQipGOmHax7ArwJm24sCF1NaUvWaXbbKbFrs=",
       "url": "_framework/Microsoft.JSInterop.wasm"
     },
     {
@@ -110,7 +110,7 @@ self.assetsManifest = {
       "url": "_framework/System.ObjectModel.wasm"
     },
     {
-      "hash": "sha256-1asMiVRN5wDu5Hklgu6YJqNz+bVYKSlRtOGyeAvfKV4=",
+      "hash": "sha256-+VIYe3aSqKs7jiXdnnpq4vZYNX/uRw9t70nagQIf7yQ=",
       "url": "_framework/System.Private.CoreLib.wasm"
     },
     {
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-kGJr44dAZYPsWmnj2QHutfjSJM3eje895cZrOEmCnZI=",
+      "hash": "sha256-3yjpA4bpXJ/oAnrZt1UmOqp8LaUN7UetCpDLH2m6ffI=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-9JcYkurgGORjGBx6mvKxTuSm9Y8hA0CyDxTymtSk0qk=",
+      "hash": "sha256-XuvmJS364rrz3Jt2/zvk5zXdSncTGBKKzeToAKlyBbA=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
@@ -194,7 +194,7 @@ self.assetsManifest = {
       "url": "_framework/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-3pi8vn5PZX70zb4QGuQjyOGip94FKLzYGt2Fq3WgJ5g=",
+      "hash": "sha256-uIdQ4ckkhDDze0jVIkzffHzSfIfNSTFsC85d/s49DsU=",
       "url": "css/app.css"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-WqEJPWHU4joamJZrOtDDIaNZR8k/2T49BJfi9dZp2s8=",
+      "hash": "sha256-lt0aan+jmlgRsWxoOI2cjCuq5Zvs7W/sNdyixXkAxoQ=",
       "url": "index.html"
     },
     {

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link href="css/app.css" rel="stylesheet" />
 </head>
-<body>
+<body style="position: fixed; width: 100%; height: 100%; overflow: hidden;">
     <div id="app">読み込み中...</div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -22,10 +22,21 @@
 
         window.initMap = () => {
             if (map) return;
+            // 明示的にコンテナの存在を確認してから初期化
+            const container = document.getElementById('map');
+            if (!container) return;
+
             map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
-            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
-            std.addTo(map);
-            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
+            L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+                attribution: '国土地理院'
+            }).addTo(map);
+
+            userMarker = L.circleMarker([0, 0], {
+                radius: 10, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 3
+            }).addTo(map);
+
+            // 描画バグ対策: 起動直後にサイズを再計算
+            setTimeout(() => { map.invalidateSize(); }, 500);
         };
 
         window.showCurrentLocation = () => {
@@ -33,12 +44,13 @@
                 const loc = [pos.coords.latitude, pos.coords.longitude];
                 map.setView(loc, 15);
                 userMarker.setLatLng(loc);
+                map.invalidateSize();
             }, null, { enableHighAccuracy: true });
         };
 
         window.startTracking = (dotNetObj) => {
             if (watchId) return;
-            currentWalkPolyline = L.polyline([], { color: 'blue', weight: 5 }).addTo(map);
+            currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
             watchId = navigator.geolocation.watchPosition(pos => {
                 const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ele: pos.coords.altitude || 0 };
                 currentWalkPolyline.addLatLng([p.lat, p.lon]);
@@ -60,22 +72,18 @@
 
         window.drawTrack = (pts) => {
             if (!pts || pts.length === 0) return;
-
-            // 既存の赤線を削除
             map.eachLayer(layer => {
                 if (layer instanceof L.Polyline && layer.options.color === 'red') map.removeLayer(layer);
             });
-
             const latlngs = pts.map(p => [p.lat, p.lon]);
-            const route = L.polyline(latlngs, { color: 'red', weight: 3, dashArray: '5, 10' }).addTo(map);
+            const route = L.polyline(latlngs, { color: 'red', weight: 4, dashArray: '5, 10' }).addTo(map);
 
-            // ★重要: 地図の表示崩れを防ぐためにサイズを再計算させてからフィットさせる
+            // 確実に描画させてからズーム
             setTimeout(() => {
                 map.invalidateSize();
-                map.fitBounds(route.getBounds(), { padding: [30, 30] });
-            }, 100);
+                map.fitBounds(route.getBounds(), { padding: [40, 40] });
+            }, 200);
         };
-
 
         window.downloadFile = (fileName, content) => {
             const blob = new Blob([content], { type: 'application/octet-stream' });
