@@ -60,7 +60,8 @@
 
         window.drawTrack = (pts) => {
             if (!pts || pts.length === 0) return;
-            // 既存の予定ルート（赤線）があれば消してから引く
+
+            // 既存の赤線を削除
             map.eachLayer(layer => {
                 if (layer instanceof L.Polyline && layer.options.color === 'red') map.removeLayer(layer);
             });
@@ -68,9 +69,13 @@
             const latlngs = pts.map(p => [p.lat, p.lon]);
             const route = L.polyline(latlngs, { color: 'red', weight: 3, dashArray: '5, 10' }).addTo(map);
 
-            // 地図の表示範囲をルート全体に合わせる（これが重要です）
-            map.fitBounds(route.getBounds(), { padding: [20, 20] });
+            // ★重要: 地図の表示崩れを防ぐためにサイズを再計算させてからフィットさせる
+            setTimeout(() => {
+                map.invalidateSize();
+                map.fitBounds(route.getBounds(), { padding: [30, 30] });
+            }, 100);
         };
+
 
         window.downloadFile = (fileName, content) => {
             const blob = new Blob([content], { type: 'application/octet-stream' });
