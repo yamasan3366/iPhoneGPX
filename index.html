@@ -1,20 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        /* 直接ここに書いてしまうのが一番確実です */
-        #map {
-            position: absolute !important;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100vh !important;
-            width: 100vw !important;
-            background-color: #eee; /* 地図が出る前にグレーになれば枠は成功 */
-        }
-    </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>iPhone GPX Viewer</title>
@@ -31,140 +17,62 @@
     <script src="_framework/blazor.webassembly.js"></script>
 
     <script>
-        // グローバル変数の初期化
-        window.map = null;
-        window.userMarker = null;
-        window.walkPolyline = null;
-        window.walkPoints = [];
-        window.watchId = null;
-        window.isHeadUpMode = false;
+        let map, userMarker, currentWalkPolyline;
+        let watchId = null;
 
-        // Blazorから呼ばれる関数群をwindow直下に確実に配置
         window.initMap = () => {
-            try {
-                if (window.map) return;
-
-                const mapElement = document.getElementById('map');
-                if (!mapElement) return;
-
-                window.map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
-
-                const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
-                    attribution: '国土地理院',
-                    maxZoom: 18
-                });
-                const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
-                    attribution: '国土地理院',
-                    maxZoom: 18
-                });
-
-                std.addTo(window.map);
-
-                L.control.zoom({ position: 'bottomright' }).addTo(window.map);
-                L.control.layers({ "標準": std, "写真": photo }, null, { position: 'bottomright' }).addTo(window.map);
-
-                window.userMarker = L.circleMarker([0, 0], {
-                    radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2
-                }).addTo(window.map);
-
-                console.log("Map initialized successfully");
-            } catch (e) {
-                console.error("Map init error:", e);
-            }
+            if (map) return;
+            map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
+            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
+            std.addTo(map);
+            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
         };
 
         window.showCurrentLocation = () => {
-            if (!window.map) return;
             navigator.geolocation.getCurrentPosition(pos => {
                 const loc = [pos.coords.latitude, pos.coords.longitude];
-                window.map.setView(loc, 15);
-                window.userMarker.setLatLng(loc);
-            }, err => alert("位置情報を許可してください"), { enableHighAccuracy: true });
-        };
-
-        let currentSegmentPolyline = null; // 現在のセグメント用の線
-
-        window.clearWalkPolyline = () => {
-            // 記録した青い線をすべて地図から削除
-            // walkPointsをリセット
-            window.walkPoints = [];
-            // 地図上の全ての青い線を消す（クラス名などで判定するか、管理用配列を回す）
-            map.eachLayer(layer => {
-                if (layer instanceof L.Polyline && layer.options.color === 'blue') {
-                    map.removeLayer(layer);
-                }
-            });
-            currentSegmentPolyline = null;
+                map.setView(loc, 15);
+                userMarker.setLatLng(loc);
+            }, null, { enableHighAccuracy: true });
         };
 
         window.startTracking = (dotNetObj) => {
-            if (window.watchId) return;
-
-            // 開始時に新しいポリラインを作成（これで前の線と繋がらない）
-            currentSegmentPolyline = L.polyline([], { color: 'blue', weight: 5 }).addTo(map);
-
-            window.watchId = navigator.geolocation.watchPosition(pos => {
+            if (watchId) return;
+            currentWalkPolyline = L.polyline([], { color: 'blue', weight: 5 }).addTo(map);
+            watchId = navigator.geolocation.watchPosition(pos => {
                 const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ele: pos.coords.altitude || 0 };
-
-                // 現在のセグメントにのみ点を追加
-                currentSegmentPolyline.addLatLng([p.lat, p.lon]);
-
+                currentWalkPolyline.addLatLng([p.lat, p.lon]);
                 map.setView([p.lat, p.lon]);
                 userMarker.setLatLng([p.lat, p.lon]);
-
                 dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
             }, null, { enableHighAccuracy: true });
         };
 
         window.stopTracking = () => {
-            if (window.watchId) {
-                navigator.geolocation.clearWatch(window.watchId);
-                window.watchId = null;
-            }
+            if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
         };
 
-        window.setHeadingMode = (val) => {
-            window.isHeadUpMode = val;
-            if (!val) document.getElementById('map').style.transform = 'rotate(0deg)';
+        window.clearWalkPolyline = () => {
+            map.eachLayer(layer => {
+                if (layer instanceof L.Polyline && layer.options.color === 'blue') map.removeLayer(layer);
+            });
         };
 
         window.drawTrack = (pts) => {
-            if (!window.map || !pts || pts.length === 0) return;
             const latlngs = pts.map(p => [p.lat, p.lon]);
-            L.polyline(latlngs, { color: 'red', weight: 3 }).addTo(window.map);
-            window.map.fitBounds(latlngs);
+            L.polyline(latlngs, { color: 'red', weight: 3, dashArray: '5, 10' }).addTo(map);
+            map.fitBounds(latlngs);
         };
 
         window.downloadFile = (fileName, content) => {
-            // MIMEタイプをバイナリ（octet-stream）にすることで強制ダウンロードを促す
             const blob = new Blob([content], { type: 'application/octet-stream' });
-            const url = window.URL.createObjectURL(blob);
-
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.setAttribute('download', fileName);
-
+            a.href = url; a.download = fileName;
             document.body.appendChild(a);
             a.click();
-
-            // 短いディレイの後に削除
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            }, 200);
-
-            return true; // 成功をBlazorに伝える
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
         };
-
-        window.vibrate = (ms) => {
-            if (navigator.vibrate) {
-                navigator.vibrate(ms);
-            } else if (window.TapticEngine) { // 一部の環境用
-                window.TapticEngine.impact({ style: "medium" });
-            }
-        };
-
     </script>
 </body>
 </html>
