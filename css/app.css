@@ -137,20 +137,19 @@
 
 
 /* 回転切り替えボタンの強調 */
-/* ノースアップ中（通常時） */
+/* ノースアップ中（デフォルト） */
 .btn-heading {
     background-color: #ffffff !important;
     border: 2px solid #6c757d !important;
     color: #6c757d !important;
 }
 
-    /* ヘッドアップ中（アクティブ時） */
+    /* ヘッドアップ中（アクティブ） */
     .btn-heading.active {
-        background-color: #0d6efd !important; /* 鮮やかな青 */
+        background-color: #0d6efd !important;
         border: 2px solid #0d6efd !important;
         color: #ffffff !important;
     }
-
 
 /* ログ保存ボタン（少しだけ目立たせるが高さは抑える） */
 .btn-export-compact {

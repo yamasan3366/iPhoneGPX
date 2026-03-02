@@ -50,24 +50,25 @@
 
 
 
-        // 明示的にfalse(ノースアップ)から開始
-        let isHeadUp = false;
+        // 状態をJS側で一元管理
+        window.isHeadUpMode = false;
         let lastLat = null, lastLon = null;
 
         window.toggleHeadingMode = () => {
-            isHeadUp = !isHeadUp; // true ↔ false 切り替え
+            // 現在の状態を反転
+            window.isHeadUpMode = !window.isHeadUpMode;
 
-            if (!isHeadUp) {
-                // ノースアップに戻すときは即座に0度へ
+            if (!window.isHeadUpMode) {
+                // ノースアップに戻す
                 map.setBearing(0);
-                lastLat = null; // 位置参照もリセット
+                lastLat = null;
                 lastLon = null;
             }
-            // Blazor側に現在の状態(true=ヘッド, false=ノース)を返す
-            return isHeadUp;
+            // 新しい状態をBlazorに返す
+            return window.isHeadUpMode;
         };
 
-        // startTracking内の回転ロジック
+        // startTracking内の回転ロジック（window変数を使用）
         window.startTracking = (dotNetObj) => {
             if (watchId) return;
             currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
@@ -76,10 +77,11 @@
                 const lon = pos.coords.longitude;
                 const p = { lat: lat, lon: lon, ele: pos.coords.altitude || 0 };
 
-                // ヘッドアップモードかつ、前回の地点がある場合のみ回転
-                if (isHeadUp && lastLat !== null) {
-                    const y = Math.sin(lon - lastLon) * Math.cos(lat);
-                    const x = Math.cos(lastLat) * Math.sin(lat) - Math.sin(lastLat) * Math.cos(lat) * Math.cos(lon - lastLon);
+                // window.isHeadUpMode が true の時だけ回転
+                if (window.isHeadUpMode && lastLat !== null) {
+                    const y = Math.sin((lon - lastLon) * Math.PI / 180) * Math.cos(lat * Math.PI / 180);
+                    const x = Math.cos(lastLat * Math.PI / 180) * Math.sin(lat * Math.PI / 180) -
+                        Math.sin(lastLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.cos((lon - lastLon) * Math.PI / 180);
                     const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
                     map.setBearing(bearing);
                 }
