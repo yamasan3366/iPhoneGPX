@@ -50,84 +50,61 @@
 
 
 
-        //// 状態をJS側で一元管理
-        //window.isHeadUpMode = false;
-        //let lastLat = null, lastLon = null;
-
-        //window.toggleHeadingMode = () => {
-        //    // 現在の状態を反転
-        //    window.isHeadUpMode = !window.isHeadUpMode;
-
-        //    if (!window.isHeadUpMode) {
-        //        // ノースアップに戻す
-        //        map.setBearing(0);
-        //        lastLat = null;
-        //        lastLon = null;
-        //    }
-        //    // 新しい状態をBlazorに返す
-        //    return window.isHeadUpMode;
-        //};
-
-        //// startTracking内の回転ロジック（window変数を使用）
-        //window.startTracking = (dotNetObj) => {
-        //    if (watchId) return;
-        //    currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
-        //    watchId = navigator.geolocation.watchPosition(pos => {
-        //        const lat = pos.coords.latitude;
-        //        const lon = pos.coords.longitude;
-        //        const p = { lat: lat, lon: lon, ele: pos.coords.altitude || 0 };
-
-        //        // window.isHeadUpMode が true の時だけ回転
-        //        if (window.isHeadUpMode && lastLat !== null) {
-        //            const y = Math.sin((lon - lastLon) * Math.PI / 180) * Math.cos(lat * Math.PI / 180);
-        //            const x = Math.cos(lastLat * Math.PI / 180) * Math.sin(lat * Math.PI / 180) -
-        //                Math.sin(lastLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.cos((lon - lastLon) * Math.PI / 180);
-        //            const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-        //            map.setBearing(bearing);
-        //        }
-
-        //        lastLat = lat; lastLon = lon;
-        //        currentWalkPolyline.addLatLng([lat, lon]);
-        //        map.setView([lat, lon]);
-        //        userMarker.setLatLng([lat, lon]);
-        //        dotNetObj.invokeMethodAsync('OnLocationUpdated', p);
-        //    }, null, { enableHighAccuracy: true });
-        //};
+        // グローバル変数を整理
+        let lastLat = null, lastLon = null;
+        window.isHeadUpInternal = false;
 
         window.setHeadingMode = (isHeadUp) => {
-            // Blazor側のCheckboxの状態(true/false)をそのまま受け取る
-            if (!isHeadUp) {
-                map.setBearing(0); // ノースアップ（北を上）に強制リセット
-            }
-            // 追従ロジック用のフラグとして保持
             window.isHeadUpInternal = isHeadUp;
+            if (!isHeadUp) {
+                map.setBearing(0); // 確実に北に向ける
+            }
             return isHeadUp;
         };
 
-        // 追従ロジック（startTracking内）
         window.startTracking = (dotNetObj) => {
             if (watchId) return;
             currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
+
             watchId = navigator.geolocation.watchPosition(pos => {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
+                const ele = pos.coords.altitude || 0;
 
-                // window.isHeadUpInternal が true の時だけ回転
-                if (window.isHeadUpInternal && typeof lastLat === 'number') {
+                // 1. 地図の回転処理（ヘッドアップ時）
+                if (window.isHeadUpInternal && lastLat !== null) {
                     const r = Math.PI / 180;
-                    const y = Math.sin((lon - lastLon) * r) * Math.cos(lat * r);
-                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) -
-                        Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos((lon - lastLon) * r);
+                    const dLon = (lon - lastLon) * r;
+                    const lat1 = lastLat * r;
+                    const lat2 = lat * r;
+
+                    const y = Math.sin(dLon) * Math.cos(lat2);
+                    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
                     const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-                    map.setBearing(bearing);
+
+                    // 移動距離が極端に短い時のチャタリング防止（簡易的）
+                    if (Math.abs(lat - lastLat) > 0.00001 || Math.abs(lon - lastLon) > 0.00001) {
+                        map.setBearing(bearing);
+                    }
                 }
 
-                lastLat = lat; lastLon = lon;
-                currentWalkPolyline.addLatLng([lat, lon]);
+                // 2. 地図の自動スクロール（現在地を中央に）
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
-                dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele: pos.coords.altitude || 0 });
-            }, null, { enableHighAccuracy: true });
+                currentWalkPolyline.addLatLng([lat, lon]);
+
+                // 3. 重要：前回の位置を保存（次回の回転計算用）
+                lastLat = lat;
+                lastLon = lon;
+
+                // 4. Blazor側へデータを送る（これでログが記録される）
+                dotNetObj.invokeMethodAsync('OnLocationUpdated', {
+                    lat: lat,
+                    lon: lon,
+                    ele: ele
+                });
+
+            }, err => console.error(err), { enableHighAccuracy: true, maximumAge: 1000 });
         };
 
         window.stopTracking = () => {

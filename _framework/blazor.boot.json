@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "iPhoneGPX",
   "resources": {
-    "hash": "sha256-CGAU3DsCjdJU0apRywioPqEJ/hWJhS5QY4HwziiLvcY=",
+    "hash": "sha256-v8NtanDm+rtw2Yf4WEHarQ6htCp4T9UehW8V2TyW4ZI=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-4g0GzvOXSwZvTLca4PrWJkoeltz+V9IF/hEFDcnVros="
     },
@@ -56,7 +56,7 @@
       "System.Xml.Linq.wasm": "sha256-7S5htdOhk5atRasRo4dCnLDmfszHScYLXiz4u+AwGyI=",
       "System.Xml.XDocument.wasm": "sha256-HzngqKmyt6plBGIjY+8XfKow3ZZrOYs1qTIDwNw1h8w=",
       "System.Private.CoreLib.wasm": "sha256-DUhreqUPT6rk5Jvg6zGo+rSMiJqqChjVLGUf92D5V4Y=",
-      "iPhoneGPX.wasm": "sha256-kheSKuWO7hZJJhGNwNUmatidFtMtrCUAGQBwJ2DHAEs="
+      "iPhoneGPX.wasm": "sha256-vyQ03Ih21FfXbnLWxt7vcyJkt7o2z7UT8KGno6cNK84="
     }
   },
   "debugLevel": 0,
