@@ -59,9 +59,17 @@
         };
 
         window.drawTrack = (pts) => {
+            if (!pts || pts.length === 0) return;
+            // 既存の予定ルート（赤線）があれば消してから引く
+            map.eachLayer(layer => {
+                if (layer instanceof L.Polyline && layer.options.color === 'red') map.removeLayer(layer);
+            });
+
             const latlngs = pts.map(p => [p.lat, p.lon]);
-            L.polyline(latlngs, { color: 'red', weight: 3, dashArray: '5, 10' }).addTo(map);
-            map.fitBounds(latlngs);
+            const route = L.polyline(latlngs, { color: 'red', weight: 3, dashArray: '5, 10' }).addTo(map);
+
+            // 地図の表示範囲をルート全体に合わせる（これが重要です）
+            map.fitBounds(route.getBounds(), { padding: [20, 20] });
         };
 
         window.downloadFile = (fileName, content) => {
