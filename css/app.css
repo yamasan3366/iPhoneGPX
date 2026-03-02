@@ -106,9 +106,10 @@
         scale: 0.8;
     }
 
-    /* 各ボタンの高さをしっかり確保 (44px以上は押しやすさの基準) */
+    /* メニュー内すべてのボタンの高さを統一 */
     .side-menu-panel .btn {
         height: 48px !important;
+        line-height: 1.2;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -116,6 +117,11 @@
         font-weight: bold;
         margin-bottom: 6px !important;
     }
+
+/* ログ消去ボタンも例外なく大きく */
+.btn-outline-danger {
+    font-size: 13px !important;
+}
 
 /* 戻る・進むボタンのエリア */
 .nav-btn-group {

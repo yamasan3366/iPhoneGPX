@@ -56,7 +56,8 @@
         window.toggleHeadingMode = () => {
             isHeadUp = !isHeadUp;
             if (!isHeadUp) {
-                map.setBearing(0); // ノースアップに戻す
+                // 確実に回転を0（北上）に戻し、アニメーションを止める
+                map.setBearing(0);
             }
             return isHeadUp;
         };
