@@ -22,13 +22,57 @@
 
         window.initMap = () => {
             if (map) return;
-            // ズームボタンとレイヤー切替を復活
-            map = L.map('map', { zoomControl: true, center: [35.68, 139.76], zoom: 13 });
-            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' }).addTo(map);
-            const topo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', { attribution: '淡色地図' });
-            L.control.layers({ "標準地図": std, "淡色地図": topo }).addTo(map);
+            // ズームボタンは自作するので false に設定
+            map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
+
+            // レイヤー定義
+            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
+            const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院(写真)' });
+            const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' });
+
+            std.addTo(map); // デフォルト
+            L.control.layers({ "標準地図": std, "空中写真": photo, "OpenStreetMap": osm }).addTo(map);
+
             userMarker = L.circleMarker([0, 0], { radius: 10, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 3 }).addTo(map);
             setTimeout(() => { map.invalidateSize(); }, 500);
+        };
+
+        // 自作ズーム機能
+        window.mapZoomIn = () => map.zoomIn();
+        window.mapZoomOut = () => map.zoomOut();
+
+        window.setHeadingMode = (isHeadUp) => {
+            window.isHeadUpInternal = isHeadUp;
+            if (!isHeadUp) map.setBearing(0);
+        };
+
+        window.startTracking = (dotNetObj) => {
+            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+            if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
+
+            watchId = navigator.geolocation.watchPosition(pos => {
+                const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
+
+                // ヘッドアップ（移動方向に基づく回転）
+                if (window.isHeadUpInternal && lastLat !== null) {
+                    const r = Math.PI / 180;
+                    const dLon = (lon - lastLon) * r;
+                    const y = Math.sin(dLon) * Math.cos(lat * r);
+                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
+                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+
+                    // 精度誤差による小刻みな回転を防ぐ（約5m以上の移動で回転）
+                    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
+                        map.setBearing(bearing);
+                    }
+                }
+
+                map.setView([lat, lon]);
+                userMarker.setLatLng([lat, lon]);
+                currentWalkPolyline.addLatLng([lat, lon]);
+                lastLat = lat; lastLon = lon;
+                dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele: ele || 0 });
+            }, null, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
         };
 
         window.showCurrentLocation = () => {
@@ -44,32 +88,32 @@
             if (!isHeadUp) map.setBearing(0);
         };
 
-        window.startTracking = (dotNetObj) => {
-            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-            if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
+        //window.startTracking = (dotNetObj) => {
+        //    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        //    if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
 
-            // スリープ中断対策：高精度・有効期限0を維持
-            watchId = navigator.geolocation.watchPosition(pos => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                const ele = pos.coords.altitude || 0;
+        //    // スリープ中断対策：高精度・有効期限0を維持
+        //    watchId = navigator.geolocation.watchPosition(pos => {
+        //        const lat = pos.coords.latitude;
+        //        const lon = pos.coords.longitude;
+        //        const ele = pos.coords.altitude || 0;
 
-                if (window.isHeadUpInternal && lastLat !== null) {
-                    const r = Math.PI / 180;
-                    const dLon = (lon - lastLon) * r;
-                    const y = Math.sin(dLon) * Math.cos(lat * r);
-                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
-                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-                    if (Math.abs(lat - lastLat) > 0.00001) map.setBearing(bearing);
-                }
+        //        if (window.isHeadUpInternal && lastLat !== null) {
+        //            const r = Math.PI / 180;
+        //            const dLon = (lon - lastLon) * r;
+        //            const y = Math.sin(dLon) * Math.cos(lat * r);
+        //            const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
+        //            const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+        //            if (Math.abs(lat - lastLat) > 0.00001) map.setBearing(bearing);
+        //        }
 
-                map.setView([lat, lon]);
-                userMarker.setLatLng([lat, lon]);
-                currentWalkPolyline.addLatLng([lat, lon]);
-                lastLat = lat; lastLon = lon;
-                dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele });
-            }, null, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
-        };
+        //        map.setView([lat, lon]);
+        //        userMarker.setLatLng([lat, lon]);
+        //        currentWalkPolyline.addLatLng([lat, lon]);
+        //        lastLat = lat; lastLon = lon;
+        //        dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele });
+        //    }, null, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+        //};
 
         window.stopTracking = () => {
             if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
