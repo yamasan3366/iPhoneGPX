@@ -171,45 +171,50 @@
 
 
 
-/* 標高グラフコンテナ */
+/* 標高グラフコンテナ（高さを160pxで固定、画面下端に密着） */
 .elevation-chart-container {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     height: 160px;
-    background: rgba(255,255,255,0.98);
+    background: #fff;
     z-index: 2000;
     border-top: 1px solid #999;
-    display: flex;
-    flex-direction: column; /* 縦に隙間なく並べる */
-    overflow: hidden;
 }
 
-/* 上部：最高/最低/距離テキスト (30px) */
+/* 上部テキスト：1行で中央表示 */
 .chart-info-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 30px;
     line-height: 30px;
-    padding: 0 10px;
     font-size: 15px;
     font-weight: bold;
-    text-align: right;
+    text-align: center; /* 中央揃えで1行に収める */
     background: #eee;
     color: #000;
+    white-space: nowrap; /* 折り返し禁止 */
 }
 
-/* 中部：グラフエリア (105px) */
+/* 中部グラフ：テキストとラベルに挟まれた全領域を確保 */
 .elevation-chart-inner {
-    height: 105px;
-    width: 100%;
-    position: relative;
+    position: absolute;
+    top: 30px; /* テキストのすぐ下 */
+    bottom: 25px; /* ラベルのすぐ上 */
+    left: 0;
+    right: 0;
     background: #fff;
-    margin: 0;
-    padding: 0; /* 空白を排除 */
 }
 
-/* 下部：距離ラベル (25px) */
+/* 下部ラベル：画面最下端に固定 */
 .chart-labels {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     height: 25px;
     line-height: 25px;
     display: flex;
@@ -219,9 +224,9 @@
     font-weight: bold;
     color: #333;
     background: #ddd;
-    margin: 0; /* 下部の5mm空白を排除 */
 }
 
+/* 横向き時：高さ110pxに凝縮 */
 @media (orientation: landscape) {
     .elevation-chart-container {
         height: 110px;
@@ -230,10 +235,12 @@
     .chart-info-text {
         height: 25px;
         line-height: 25px;
+        font-size: 13px;
     }
 
     .elevation-chart-inner {
-        height: 65px;
+        top: 25px;
+        bottom: 20px;
     }
 
     .chart-labels {
