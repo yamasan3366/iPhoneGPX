@@ -22,18 +22,21 @@
 
         window.initMap = () => {
             if (map) return;
-            // ズームボタンは自作するので false に設定
-            map = L.map('map', { zoomControl: false, center: [35.68, 139.76], zoom: 13 });
+            // ズームボタンを有効化(標準サイズ)
+            map = L.map('map', { zoomControl: true, center: [35.68, 139.76], zoom: 13 });
 
-            // レイヤー定義
             const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
             const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院(写真)' });
             const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' });
 
-            std.addTo(map); // デフォルト
+            std.addTo(map);
             L.control.layers({ "標準地図": std, "空中写真": photo, "OpenStreetMap": osm }).addTo(map);
 
-            userMarker = L.circleMarker([0, 0], { radius: 10, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 3 }).addTo(map);
+            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
+
+            // ズームボタンの位置を微調整（後述のCSSと連動）
+            map.zoomControl.setPosition('topright');
+
             setTimeout(() => { map.invalidateSize(); }, 500);
         };
 
@@ -87,33 +90,6 @@
             window.isHeadUpInternal = isHeadUp;
             if (!isHeadUp) map.setBearing(0);
         };
-
-        //window.startTracking = (dotNetObj) => {
-        //    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-        //    if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
-
-        //    // スリープ中断対策：高精度・有効期限0を維持
-        //    watchId = navigator.geolocation.watchPosition(pos => {
-        //        const lat = pos.coords.latitude;
-        //        const lon = pos.coords.longitude;
-        //        const ele = pos.coords.altitude || 0;
-
-        //        if (window.isHeadUpInternal && lastLat !== null) {
-        //            const r = Math.PI / 180;
-        //            const dLon = (lon - lastLon) * r;
-        //            const y = Math.sin(dLon) * Math.cos(lat * r);
-        //            const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
-        //            const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-        //            if (Math.abs(lat - lastLat) > 0.00001) map.setBearing(bearing);
-        //        }
-
-        //        map.setView([lat, lon]);
-        //        userMarker.setLatLng([lat, lon]);
-        //        currentWalkPolyline.addLatLng([lat, lon]);
-        //        lastLat = lat; lastLon = lon;
-        //        dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele });
-        //    }, null, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
-        //};
 
         window.stopTracking = () => {
             if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }

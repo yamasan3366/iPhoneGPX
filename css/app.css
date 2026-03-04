@@ -25,30 +25,42 @@
     z-index: 5000;
 }
 
+/* 3. 左側ボタン群の位置をレイヤーボタン(約10px+inset)に合わせる */
 .floating-controls {
     position: fixed;
-    top: calc(env(safe-area-inset-top) + 60px);
-    left: 15px;
+    top: calc(env(safe-area-inset-top) + 10px);
+    left: 10px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
+/* 2. 各ボタンを一回り小さく(約40px) */
 .action-btn, .btn-rec-start, .btn-rec-stop {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     border: none;
 }
 
     .action-btn i, .btn-rec-start i, .btn-rec-stop i {
-        font-size: 32px;
+        font-size: 20px;
     }
+
+/* 標高グラフの数値表記（フォント大きく、余白詰め） */
+.chart-info-text {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+}
 
 #heading-check {
     display: none;
@@ -136,4 +148,16 @@
 /* 以前のボタン標題（メニュー内） */
 .side-menu-panel .btn {
     font-size: 14px !important;
+}
+
+/* 5. 横向き時のグラフ高さ調整 */
+@media (orientation: landscape) {
+    .elevation-chart-container {
+        height: 112px !important; /* 160pxの70% */
+    }
+}
+
+/* ズームボタンが重ならないよう位置調整（レイヤーボタンの下） */
+.leaflet-top.leaflet-right {
+    top: calc(env(safe-area-inset-top) + 45px) !important;
 }
