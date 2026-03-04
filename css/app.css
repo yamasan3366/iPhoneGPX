@@ -85,31 +85,6 @@
     color: white;
 }
 
-/*.elevation-chart-container {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 160px;
-    background: rgba(255,255,255,0.95);
-    z-index: 2000;
-    border-top: 1px solid #ccc;
-    padding: 25px 15px 10px;
-    display: none;
-}
-
-    .elevation-chart-container.active {
-        display: block;
-    }
-
-*//* グラフエリア：テキスト下の余白を埋めるため、SVGの高さを調整 */
-/*.elevation-chart-inner {
-    width: 100%;
-    height: 120px;*/ /* 高さを確保して余白を埋める */
-    /*background: rgba(240,240,240,0.6);
-    position: relative;
-    margin-top: 20px;*/ /* テキストとの重なりを防ぐ最小限の隙間 */
-/*}*/
 
 .side-menu-panel {
     position: fixed;
@@ -160,14 +135,6 @@
 .side-menu-panel .btn {
     font-size: 14px !important;
 }
-
-/* 横向き時のグラフ高さ 70% */
-/*@media (orientation: landscape) {
-    .elevation-chart-container.active {
-        height: 112px !important;
-    }
-}
-*/
 
 /* ズームボタンが重ならないよう位置調整（レイヤーボタンの下） */
 .leaflet-top.leaflet-right {
