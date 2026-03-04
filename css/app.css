@@ -7,9 +7,10 @@
     z-index: 1;
 }
 
-/* 3. 右側ボタン（レイヤー・ズーム）の位置を最上部へ */
+/* 3. 右側UI（レイヤー・ズーム）を最上部に固定 */
 .leaflet-top.leaflet-right {
-    top: calc(env(safe-area-inset-top) + 0px) !important;
+    top: env(safe-area-inset-top) !important;
+    margin-top: 5px !important;
 }
 
 .recording-status {
@@ -52,17 +53,16 @@
         font-size: 20px;
     }
 
-/* グラフ数値表記：フォントを大きく、上下余白ゼロ */
+/* グラフ数値テキスト（フォントを大きく、余白ゼロ） */
 .chart-info-text {
     position: absolute;
-    top: 0px; /* ギリギリまで上げる */
+    top: 0px;
     right: 10px;
-    font-size: 15px; /* さらに少し大きく */
+    font-size: 15px;
     font-weight: bold;
-    line-height: 1;
+    line-height: 1.2;
     z-index: 2100;
 }
-
 
 #heading-check {
     display: none;
@@ -101,6 +101,15 @@
     .elevation-chart-container.active {
         display: block;
     }
+
+/* グラフエリア：テキスト下の余白を埋めるため、SVGの高さを調整 */
+.elevation-chart-inner {
+    width: 100%;
+    height: 120px; /* 高さを確保して余白を埋める */
+    background: rgba(240,240,240,0.6);
+    position: relative;
+    margin-top: 20px; /* テキストとの重なりを防ぐ最小限の隙間 */
+}
 
 .side-menu-panel {
     position: fixed;
