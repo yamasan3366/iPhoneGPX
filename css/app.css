@@ -7,9 +7,9 @@
     z-index: 1;
 }
 
-/* ズームボタンの位置調整（iOSのUIと被らないように） */
-.leaflet-top.leaflet-left {
-    top: 320px !important;
+/* 3. 右側ボタン（レイヤー・ズーム）の位置を最上部へ */
+.leaflet-top.leaflet-right {
+    top: calc(env(safe-area-inset-top) + 0px) !important;
 }
 
 .recording-status {
@@ -25,7 +25,7 @@
     z-index: 5000;
 }
 
-/* 3. 左側ボタン群の位置をレイヤーボタン(約10px+inset)に合わせる */
+/* 3. 左側ボタン群の最上端を合わせる */
 .floating-controls {
     position: fixed;
     top: calc(env(safe-area-inset-top) + 10px);
@@ -52,15 +52,17 @@
         font-size: 20px;
     }
 
-/* 標高グラフの数値表記（フォント大きく、余白詰め） */
+/* グラフ数値表記：フォントを大きく、上下余白ゼロ */
 .chart-info-text {
     position: absolute;
-    top: 2px;
+    top: 0px; /* ギリギリまで上げる */
     right: 10px;
-    font-size: 14px;
+    font-size: 15px; /* さらに少し大きく */
     font-weight: bold;
     line-height: 1;
+    z-index: 2100;
 }
+
 
 #heading-check {
     display: none;
@@ -150,12 +152,13 @@
     font-size: 14px !important;
 }
 
-/* 5. 横向き時のグラフ高さ調整 */
+/* 横向き時のグラフ高さ 70% */
 @media (orientation: landscape) {
-    .elevation-chart-container {
-        height: 112px !important; /* 160pxの70% */
+    .elevation-chart-container.active {
+        height: 112px !important;
     }
 }
+
 
 /* ズームボタンが重ならないよう位置調整（レイヤーボタンの下） */
 .leaflet-top.leaflet-right {

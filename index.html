@@ -27,18 +27,19 @@
 
             const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
             const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '国土地理院(写真)' });
-            const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' });
+            const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' });
 
             std.addTo(map);
-            L.control.layers({ "標準地図": std, "空中写真": photo, "OpenStreetMap": osm }).addTo(map);
+            L.control.layers({ "標準地図": std, "空中写真": photo, "OSM": osm }).addTo(map);
 
             userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
 
-            // ズームボタンの位置を微調整（後述のCSSと連動）
+            // ズームボタンとレイヤーボタンを右上に寄せる
             map.zoomControl.setPosition('topright');
 
             setTimeout(() => { map.invalidateSize(); }, 500);
         };
+
 
         // 自作ズーム機能
         window.mapZoomIn = () => map.zoomIn();
