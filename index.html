@@ -58,33 +58,63 @@
             if (!isHeadUp) map.setBearing(0);
         };
 
-        window.startTracking = (dotNetObj) => {
-            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-            if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
+        let wakeLock = null;
+        window.isRecordingInternal = false;
 
+        // 復帰時にGPSを強制再起動するイベント
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && window.isRecordingInternal) {
+                console.log("Safari復帰：GPS監視をリセットします");
+                // 一旦止めてから再開
+                if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+                startGPS();
+            }
+        });
+
+        window.startTracking = async (dotNetObj) => {
+            window.dotNetObj = dotNetObj;
+            window.isRecordingInternal = true;
+
+            // 画面消灯(スリープ)を禁止
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) { console.error("WakeLock failed"); }
+
+            startGPS();
+        };
+
+        // GPS監視本体の切り出し
+        function startGPS() {
             watchId = navigator.geolocation.watchPosition(pos => {
                 const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
 
-                // ヘッドアップ（移動方向に基づく回転）
-                if (window.isHeadUpInternal && lastLat !== null) {
-                    const r = Math.PI / 180;
-                    const dLon = (lon - lastLon) * r;
-                    const y = Math.sin(dLon) * Math.cos(lat * r);
-                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
-                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-
-                    // 精度誤差による小刻みな回転を防ぐ（約5m以上の移動で回転）
-                    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
-                        map.setBearing(bearing);
-                    }
-                }
-
+                // 地図とマーカーを更新
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
-                currentWalkPolyline.addLatLng([lat, lon]);
-                lastLat = lat; lastLon = lon;
-                dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele: ele || 0 });
-            }, null, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+                if (currentWalkPolyline) currentWalkPolyline.addLatLng([lat, lon]);
+
+                window.dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele: ele || 0 });
+            }, (err) => {
+                console.warn("GPS Watch Error:", err.message);
+            }, {
+                enableHighAccuracy: true,
+                timeout: 10000, // 登山用なので少し長めに待つ
+                maximumAge: 0
+            });
+        }
+
+        window.stopTracking = () => {
+            window.isRecordingInternal = false;
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
         };
 
         window.showCurrentLocation = () => {
@@ -100,9 +130,6 @@
             if (!isHeadUp) map.setBearing(0);
         };
 
-        window.stopTracking = () => {
-            if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
-        };
 
         window.drawTrack = (pts) => {
             if (!pts || pts.length === 0) return;
