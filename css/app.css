@@ -171,54 +171,57 @@
 
 
 
-/* グラフ全体のコンテナ */
+/* 標高グラフコンテナ（高さを160pxに固定） */
 .elevation-chart-container {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     height: 160px;
-    background: rgba(255,255,255,0.92);
+    background: rgba(255,255,255,0.96);
     z-index: 2000;
-    border-top: 2px solid #ddd;
-    display: flex;
-    flex-direction: column;
+    border-top: 1px solid #ccc;
+    display: block; /* レイアウトを単純化 */
 }
 
-/* 上部のテキストエリア */
+/* 4. 上部のテキストエリア (高さ 25px) */
 .chart-info-text {
-    height: 28px;
-    line-height: 28px;
+    height: 25px;
+    line-height: 25px;
     padding-right: 15px;
     font-size: 14px;
     font-weight: bold;
     text-align: right;
-    color: #333;
 }
 
-/* グラフ本体（上下に余裕を持たせたエリア） */
+/* 1. グラフ本体エリア (高さ 110px) */
 .elevation-chart-inner {
-    flex-grow: 1; /* 残りのスペースをすべて使う */
+    height: 110px;
     width: 100%;
     position: relative;
-    background: linear-gradient(rgba(240,240,240,0.4) 1px, transparent 1px);
-    background-size: 100% 20px; /* 目安の横線 */
+    background: #f9f9f9;
 }
 
-/* 2. 復活させた距離ラベル */
+/* 2. 下部の距離ラベルエリア (高さ 25px) */
 .chart-labels {
-    height: 20px;
+    height: 25px;
+    line-height: 20px;
     display: flex;
     justify-content: space-between;
     padding: 0 10px;
     font-size: 11px;
-    color: #666;
-    background: white;
-    border-top: 1px solid #eee;
+    color: #444;
+    background: #eee;
+    border-top: 1px solid #ddd;
 }
 
+/* 横向き時 (合計 110px) */
 @media (orientation: landscape) {
     .elevation-chart-container {
         height: 110px;
+    }
+
+    .elevation-chart-inner {
+        height: 60px;
     }
 }
