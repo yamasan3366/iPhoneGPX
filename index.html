@@ -71,11 +71,42 @@
             }
         });
 
+        let audioContext = null;
+        let silenceSource = null;
+
+        // 無音のオーディオ信号を生成する関数
+        function playSilence() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            // 1秒間の無音バッファを作成
+            const buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
+            silenceSource = audioContext.createBufferSource();
+            silenceSource.buffer = buffer;
+            silenceSource.loop = true; // ループ再生
+            silenceSource.connect(audioContext.destination);
+            silenceSource.start();
+            console.log("無音ハック：再生開始");
+        }
+
+        function stopSilence() {
+            if (silenceSource) {
+                silenceSource.stop();
+                silenceSource = null;
+                console.log("無音ハック：停止");
+            }
+        }
+
+        // 既存の開始・停止関数に組み込む
         window.startTracking = async (dotNetObj) => {
             window.dotNetObj = dotNetObj;
             window.isRecordingInternal = true;
 
-            // 画面消灯(スリープ)を禁止
+            // iOSではユーザー操作（ボタンクリック等）のコールバック内で
+            // オーディオを開始する必要があるため、ここで呼び出す
+            playSilence();
+
+            // WakeLock（画面点灯維持）も併用
             try {
                 if ('wakeLock' in navigator) {
                     wakeLock = await navigator.wakeLock.request('screen');
@@ -83,6 +114,19 @@
             } catch (err) { console.error("WakeLock failed"); }
 
             startGPS();
+        };
+
+        window.stopTracking = () => {
+            window.isRecordingInternal = false;
+            stopSilence(); // 停止
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
         };
 
         // GPS監視本体の切り出し
@@ -105,17 +149,6 @@
             });
         }
 
-        window.stopTracking = () => {
-            window.isRecordingInternal = false;
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            if (wakeLock) {
-                wakeLock.release();
-                wakeLock = null;
-            }
-        };
 
         window.showCurrentLocation = () => {
             navigator.geolocation.getCurrentPosition(pos => {
