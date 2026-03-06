@@ -183,25 +183,27 @@
         };
 
         window.requestDeviceOrientation = async () => {
-            // iOS特有の許可リクエスト
+            // 診断用
+            console.log("requestDeviceOrientation 呼び出し成功");
+
             if (typeof DeviceOrientationEvent !== 'undefined' &&
                 typeof DeviceOrientationEvent.requestPermission === 'function') {
+
                 try {
+                    // ここでポップアップが出るはず
                     const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        window.startOrientationListener();
-                        return true;
-                    }
+                    alert("許可ステータス: " + permission); // 診断用
+                    return permission === 'granted';
                 } catch (error) {
-                    console.error("センサー許可エラー:", error);
+                    alert("エラー発生: " + error);
                     return false;
                 }
             } else {
-                // Androidや古いiOSなどは直接開始
-                window.startOrientationListener();
+                alert("このブラウザは requestPermission に対応していません（Android等）");
                 return true;
             }
         };
+
 
         window.startOrientationListener = () => {
             window.addEventListener('deviceorientationabsolute', (event) => {
