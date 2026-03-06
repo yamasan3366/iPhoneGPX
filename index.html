@@ -130,22 +130,22 @@
             watchId = navigator.geolocation.watchPosition(pos => {
                 const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
 
-                //if (window.isHeadUpInternal && lastLat !== null) {
-                //    const r = Math.PI / 180;
-                //    const dLon = (lon - lastLon) * r;
-                //    const y = Math.sin(dLon) * Math.cos(lat * r);
-                //    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
-                //    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+                if (window.isHeadUpInternal && lastLat !== null) {
+                    const r = Math.PI / 180;
+                    const dLon = (lon - lastLon) * r;
+                    const y = Math.sin(dLon) * Math.cos(lat * r);
+                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
+                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 
-                //    // 精度誤差による小刻みな回転を防ぐ
-                //    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
-                //        const mapElement = document.getElementById('map');
-                //        if (mapElement) {
-                //            // map.setBearing の代わりに CSS で回転・拡大
-                //            mapElement.style.transform = `rotate(${-bearing}deg) scale(1.6)`;
-                //        }
-                //    }
-                //}
+                    // 精度誤差による小刻みな回転を防ぐ
+                    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
+                        const mapElement = document.getElementById('map');
+                        if (mapElement) {
+                            // map.setBearing の代わりに CSS で回転・拡大
+                            mapElement.style.transform = `rotate(${-bearing}deg) scale(1.6)`;
+                        }
+                    }
+                }
 
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
