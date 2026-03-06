@@ -181,6 +181,43 @@
             a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 5000);
         };
+
+        window.requestDeviceOrientation = async () => {
+            // iOS特有の許可リクエスト
+            if (typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        window.startOrientationListener();
+                        return true;
+                    }
+                } catch (error) {
+                    console.error("センサー許可エラー:", error);
+                    return false;
+                }
+            } else {
+                // Androidや古いiOSなどは直接開始
+                window.startOrientationListener();
+                return true;
+            }
+        };
+
+        window.startOrientationListener = () => {
+            window.addEventListener('deviceorientationabsolute', (event) => {
+                let heading = event.alpha; // 北を0とした角度
+                if (event.webkitCompassHeading) {
+                    heading = event.webkitCompassHeading; // iOS用の方位角
+                }
+                if (heading !== undefined && window.isHeadUp) {
+                    // 地図を回転させる（ Leafletのコンテナを回転 ）
+                    document.getElementById('map').style.transform = `rotate(${-heading}deg)`;
+                }
+            }, true);
+        };
+
+
+
     </script>
 </body>
 </html>
