@@ -59,26 +59,49 @@
 
         // 【新規】iOSのセンサー許可を求め、コンパス連動を開始する関数
         async function directRequestPermission() {
-            // すでにONの場合は、OFF（ノースアップ）にリセットして終了
-            if (window.isHeadUpInternal) {
-                window.setHeadingMode(false);
+            const chk = document.getElementById('heading-check');
+            const isChecked = chk.checked; // チェックボックスの現在の状態を取得
+
+            // 1. OFFにされた場合：回転をリセットして終了
+            if (!isChecked) {
+                window.isHeadUpInternal = false;
+                window.removeEventListener('deviceorientation', handleCompass);
+                const mapElement = document.getElementById('map');
+                if (mapElement) {
+                    mapElement.style.transition = "transform 0.4s ease-out";
+                    mapElement.style.transform = "rotate(0deg) scale(1.0)";
+                }
                 return;
             }
 
-            // iOS 13+ のための権限リクエスト
+            // 2. ONにされた場合：許可を求めて開始
             if (typeof DeviceOrientationEvent !== 'undefined' &&
                 typeof DeviceOrientationEvent.requestPermission === 'function') {
                 try {
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission === 'granted') {
-                        activateHeading(true);
+                        startHeadingMode();
+                    } else {
+                        chk.checked = false; // 拒否されたらチェックを外す
                     }
-                } catch (e) { console.error("センサーアクセスエラー:", e); }
+                } catch (e) {
+                    console.error(e);
+                    chk.checked = false;
+                }
             } else {
-                // AndroidやPC、古いiOSの場合
-                activateHeading(true);
+                startHeadingMode();
             }
         }
+
+        function startHeadingMode() {
+            window.isHeadUpInternal = true;
+            window.addEventListener('deviceorientation', handleCompass, true);
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                mapElement.style.transform = "scale(1.6)"; // 先に拡大しておく
+            }
+        }
+
 
         // 回転処理を有効化する内部関数
         function activateHeading(isEnable) {

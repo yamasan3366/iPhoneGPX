@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "A/kR7APr",
+  "version": "yGH9onbQ",
   "assets": [
     {
       "hash": "sha256-UUhEHYLFr+lj8XDWCY7HECt/3ixqGD4F28bZL/8ip6I=",
@@ -10,7 +10,7 @@ self.assetsManifest = {
       "url": "_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-QRyxTztH5VLP/Q+kMrwkPV+QgE2IkZOgfrLt9Bg5MC4=",
+      "hash": "sha256-BpakxVzXB6vLz2EqBw9TFq6FalbXO06+mbUuwt/RNOM=",
       "url": "_framework/Microsoft.AspNetCore.Components.wasm"
     },
     {
@@ -110,7 +110,7 @@ self.assetsManifest = {
       "url": "_framework/System.ObjectModel.wasm"
     },
     {
-      "hash": "sha256-XUvDNaX0ccwWwy02EK27kW1dQikR8klb+8Q/Vk3YB7E=",
+      "hash": "sha256-chRDBl3c6Hpoeh17S/6VjaE9zfBM4JzqvS7LP2WKzdk=",
       "url": "_framework/System.Private.CoreLib.wasm"
     },
     {
@@ -130,7 +130,7 @@ self.assetsManifest = {
       "url": "_framework/System.Runtime.InteropServices.JavaScript.wasm"
     },
     {
-      "hash": "sha256-DFrDMZ5gH62GszALqEyAORGlS8sCLvlusBBqOWoDxhA=",
+      "hash": "sha256-00EvwPbbO/Zy8SQL121r7vmzpnPmOiU4aHweWvfA1pk=",
       "url": "_framework/System.Runtime.wasm"
     },
     {
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-x8PGt1FofzmXrUs9R+06GNefNHxFacekw1iIPqev88c=",
+      "hash": "sha256-DnaeOhFQTHeRftq0YuLJ2QkBNCQElZr3seC2JHqjxWw=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-3iNK6bitPeuoNQ2bXhYnjtx3VWCPN2nLEJCbzHQBgU0=",
+      "hash": "sha256-83tPqshbDcfHGbbAV5x6Zqncxw7+/uavRxjDzw/xaSs=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-mqinzuE12b8ua4yxzuZQuIVQOJZkcZ3W6+1sRMNRNY0=",
+      "hash": "sha256-jSl2vUQwJf8iqo4AL9U9eVsUPt3nEvExf0gwlSG7yMM=",
       "url": "index.html"
     },
     {
