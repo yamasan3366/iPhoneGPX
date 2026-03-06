@@ -58,97 +58,34 @@
             if (!isHeadUp) map.setBearing(0);
         };
 
-        let wakeLock = null;
-        window.isRecordingInternal = false;
+        window.startTracking = (dotNetObj) => {
+            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+            if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
 
-        // 復帰時にGPSを強制再起動するイベント
-        document.addEventListener('visibilitychange', async () => {
-            if (document.visibilityState === 'visible' && window.isRecordingInternal) {
-                console.log("Safari復帰：GPS監視をリセットします");
-                // 一旦止めてから再開
-                if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-                startGPS();
-            }
-        });
-
-        let audioContext = null;
-        let silenceSource = null;
-
-        // 無音のオーディオ信号を生成する関数
-        function playSilence() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            // 1秒間の無音バッファを作成
-            const buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
-            silenceSource = audioContext.createBufferSource();
-            silenceSource.buffer = buffer;
-            silenceSource.loop = true; // ループ再生
-            silenceSource.connect(audioContext.destination);
-            silenceSource.start();
-            console.log("無音ハック：再生開始");
-        }
-
-        function stopSilence() {
-            if (silenceSource) {
-                silenceSource.stop();
-                silenceSource = null;
-                console.log("無音ハック：停止");
-            }
-        }
-
-        // 既存の開始・停止関数に組み込む
-        window.startTracking = async (dotNetObj) => {
-            window.dotNetObj = dotNetObj;
-            window.isRecordingInternal = true;
-
-            // iOSではユーザー操作（ボタンクリック等）のコールバック内で
-            // オーディオを開始する必要があるため、ここで呼び出す
-            playSilence();
-
-            // WakeLock（画面点灯維持）も併用
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                }
-            } catch (err) { console.error("WakeLock failed"); }
-
-            startGPS();
-        };
-
-        window.stopTracking = () => {
-            window.isRecordingInternal = false;
-            stopSilence(); // 停止
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            if (wakeLock) {
-                wakeLock.release();
-                wakeLock = null;
-            }
-        };
-
-        // GPS監視本体の切り出し
-        function startGPS() {
             watchId = navigator.geolocation.watchPosition(pos => {
                 const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
 
-                // 地図とマーカーを更新
+                // ヘッドアップ（移動方向に基づく回転）
+                if (window.isHeadUpInternal && lastLat !== null) {
+                    const r = Math.PI / 180;
+                    const dLon = (lon - lastLon) * r;
+                    const y = Math.sin(dLon) * Math.cos(lat * r);
+                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
+                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+
+                    // 精度誤差による小刻みな回転を防ぐ（約5m以上の移動で回転）
+                    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
+                        map.setBearing(bearing);
+                    }
+                }
+
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
-                if (currentWalkPolyline) currentWalkPolyline.addLatLng([lat, lon]);
-
-                window.dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele: ele || 0 });
-            }, (err) => {
-                console.warn("GPS Watch Error:", err.message);
-            }, {
-                enableHighAccuracy: true,
-                timeout: 10000, // 登山用なので少し長めに待つ
-                maximumAge: 0
-            });
-        }
-
+                currentWalkPolyline.addLatLng([lat, lon]);
+                lastLat = lat; lastLon = lon;
+                dotNetObj.invokeMethodAsync('OnLocationUpdated', { lat, lon, ele: ele || 0 });
+            }, null, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+        };
 
         window.showCurrentLocation = () => {
             navigator.geolocation.getCurrentPosition(pos => {
@@ -163,6 +100,9 @@
             if (!isHeadUp) map.setBearing(0);
         };
 
+        window.stopTracking = () => {
+            if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+        };
 
         window.drawTrack = (pts) => {
             if (!pts || pts.length === 0) return;
@@ -181,105 +121,6 @@
             a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 5000);
         };
-
-        window.requestDeviceOrientation = async () => {
-            // 診断用
-            console.log("requestDeviceOrientation 呼び出し成功");
-
-            if (typeof DeviceOrientationEvent !== 'undefined' &&
-                typeof DeviceOrientationEvent.requestPermission === 'function') {
-
-                try {
-                    // ここでポップアップが出るはず
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    alert("許可ステータス: " + permission); // 診断用
-                    return permission === 'granted';
-                } catch (error) {
-                    alert("エラー発生: " + error);
-                    return false;
-                }
-            } else {
-                alert("このブラウザは requestPermission に対応していません（Android等）");
-                return true;
-            }
-        };
-
-
-        window.startOrientationListener = () => {
-            window.addEventListener('deviceorientationabsolute', (event) => {
-                let heading = event.alpha; // 北を0とした角度
-                if (event.webkitCompassHeading) {
-                    heading = event.webkitCompassHeading; // iOS用の方位角
-                }
-                if (heading !== undefined && window.isHeadUp) {
-                    // 地図を回転させる（ Leafletのコンテナを回転 ）
-                    document.getElementById('map').style.transform = `rotate(${-heading}deg)`;
-                }
-            }, true);
-        };
-
-        let isHeadUpActive = false;
-        let lastHeading = 0;
-        let animationFrameId = null;
-
-        let isHeadUpActive = false;
-        let lastHeading = 0;
-
-        // 地図の向き（ヘッドアップ）トグル
-        async function directRequestPermission() {
-            if (isHeadUpActive) {
-                resetMapRotation();
-                return;
-            }
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                const permission = await DeviceOrientationEvent.requestPermission();
-                if (permission === 'granted') {
-                    isHeadUpActive = true;
-                    window.addEventListener('deviceorientation', handleOrientation, true);
-                }
-            } else {
-                isHeadUpActive = true;
-                window.addEventListener('deviceorientation', handleOrientation, true);
-            }
-        }
-
-        function handleOrientation(event) {
-            if (!isHeadUpActive) return;
-            let targetHeading = event.webkitCompassHeading || (360 - (event.alpha || 0));
-            let diff = targetHeading - lastHeading;
-            if (diff > 180) diff -= 360;
-            if (diff < -180) diff += 360;
-            lastHeading = lastHeading + (diff * 0.08); // 0.08: さらに少しマイルドに
-            const mapElement = document.getElementById('map');
-            if (mapElement) {
-                mapElement.style.transform = `rotate(${-lastHeading}deg) scale(1.6)`;
-            }
-        }
-
-        function resetMapRotation() {
-            isHeadUpActive = false;
-            window.removeEventListener('deviceorientation', handleOrientation);
-            const mapElement = document.getElementById('map');
-            if (mapElement) {
-                mapElement.style.transform = `rotate(0deg) scale(1.0)`;
-            }
-        }
-
-
-        window.startOrientationListener = () => {
-            // 既にリスナーがある場合は二重登録を防ぐ
-            window.removeEventListener('deviceorientationabsolute', handleOrientation);
-            window.removeEventListener('deviceorientation', handleOrientation);
-
-            // iOS用のコンパスイベント
-            if ('ondeviceorientationabsolute' in window) {
-                window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-            } else if ('ondeviceorientation' in window) {
-                window.addEventListener('deviceorientation', handleOrientation, true);
-            }
-        };
-
-
     </script>
 </body>
 </html>
