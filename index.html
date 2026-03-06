@@ -222,56 +222,42 @@
         let lastHeading = 0;
         let animationFrameId = null;
 
+        let isHeadUpActive = false;
+        let lastHeading = 0;
+
         async function directRequestPermission() {
-            // 1. すでにONの場合はOFF（ノースアップ）にリセット
             if (isHeadUpActive) {
                 resetMapRotation();
                 return;
             }
 
-            // 2. OFFの場合は許可を求めて開始
             if (typeof DeviceOrientationEvent !== 'undefined' &&
                 typeof DeviceOrientationEvent.requestPermission === 'function') {
                 try {
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission === 'granted') {
-                        startHeadUp();
-                    } else {
-                        alert("センサーが許可されませんでした。");
+                        isHeadUpActive = true;
+                        window.addEventListener('deviceorientation', handleOrientation, true);
                     }
-                } catch (e) {
-                    alert("エラー: " + e);
-                }
+                } catch (e) { console.error(e); }
             } else {
-                // iOS以外や対応端末
-                startHeadUp();
+                isHeadUpActive = true;
+                window.addEventListener('deviceorientation', handleOrientation, true);
             }
-        }
-
-        function startHeadUp() {
-            isHeadUpActive = true;
-            window.addEventListener('deviceorientation', handleOrientation, true);
-            // ボタンの見た目を変えるためにBlazor側に通知が必要ならここで
-            alert("ヘッドアップ開始");
         }
 
         function handleOrientation(event) {
             if (!isHeadUpActive) return;
-
-            // iOS用のコンパス方位（0=北）
             let targetHeading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            // 回転の最短ルート計算（350度から10度に回る時などに逆回転させないため）
             let diff = targetHeading - lastHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
 
-            // 【動きの抑制】0.1 を小さくするほどゆっくり回ります（0.05〜0.1程度が登山には適当です）
             lastHeading = lastHeading + (diff * 0.1);
-
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // scale(1.5)で空白を埋める
+                // scaleを1.5に設定
                 mapElement.style.transform = `rotate(${-lastHeading}deg) scale(1.5)`;
             }
         }
@@ -279,15 +265,11 @@
         function resetMapRotation() {
             isHeadUpActive = false;
             window.removeEventListener('deviceorientation', handleOrientation);
-
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // 回転と拡大を解除
                 mapElement.style.transform = `rotate(0deg) scale(1.0)`;
             }
-            alert("ノースアップに戻しました");
         }
-
 
 
 

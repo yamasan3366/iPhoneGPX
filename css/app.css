@@ -25,10 +25,26 @@
     height: 100vh;
 }
 
-#map {
-    transition: transform 0.1s linear; /* 動きをより滑らかに */
+/* 地図を包む親コンテナ（Home.razorで作成） */
+.map-viewport {
+    width: 100%;
+    height: 70vh; /* 任意の高さ。画面全体なら 100vh */
+    position: relative;
+    overflow: hidden; /* はみ出た回転地図を隠す */
+    margin: 0;
+    padding: 0;
+    background-color: #eee; /* 地図が消えているか判別用 */
 }
 
+#map {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* transitionを linear にすると回転がスムーズになります */
+    transition: transform 0.1s linear;
+}
 
 /* 3. 右側UI（レイヤー・ズーム）を最上部に固定 */
 .leaflet-top.leaflet-right {
