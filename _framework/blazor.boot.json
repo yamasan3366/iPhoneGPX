@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "iPhoneGPX",
   "resources": {
-    "hash": "sha256-2h4oRqtSZrA9IQUTcpY10ynLHwIgYrJky2YQmKbEgzo=",
+    "hash": "sha256-HWENySz3LOqA38/4/iXla4Bt5b6pJgNixrnxQnFWq64=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-4g0GzvOXSwZvTLca4PrWJkoeltz+V9IF/hEFDcnVros="
     },
@@ -18,8 +18,8 @@
     },
     "coreAssembly": {},
     "assembly": {
-      "Microsoft.AspNetCore.Components.wasm": "sha256-sw1IRpnbrde8jjYaMEM6EWJrmbGTgp1QZCQiO+p5uNk=",
-      "Microsoft.AspNetCore.Components.Web.wasm": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
+      "Microsoft.AspNetCore.Components.wasm": "sha256-QDw8IKdGses2/KJhOqsQUR849tEQnWN/JrNJ1zKk+fc=",
+      "Microsoft.AspNetCore.Components.Web.wasm": "sha256-UUhEHYLFr+lj8XDWCY7HECt/3ixqGD4F28bZL/8ip6I=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-mQuneeAeWDrcjGuNard1yrBeC94E2PlOZXHG84WqvfY=",
       "Microsoft.Extensions.Configuration.wasm": "sha256-od574rRtVVRJj+24jbl8j3GdQFpxlJOpSx+pEMw1Q18=",
       "Microsoft.Extensions.Configuration.Abstractions.wasm": "sha256-XR+WUfg8LtnrwdXFBnV+qO3ROyp6cYCfl1AZajIAheM=",
@@ -56,7 +56,7 @@
       "System.Xml.Linq.wasm": "sha256-7S5htdOhk5atRasRo4dCnLDmfszHScYLXiz4u+AwGyI=",
       "System.Xml.XDocument.wasm": "sha256-HzngqKmyt6plBGIjY+8XfKow3ZZrOYs1qTIDwNw1h8w=",
       "System.Private.CoreLib.wasm": "sha256-chRDBl3c6Hpoeh17S/6VjaE9zfBM4JzqvS7LP2WKzdk=",
-      "iPhoneGPX.wasm": "sha256-V8DtDcv7bKBbEyYvnV07Gq7KadkOCf+cbhRqL4Ek2d0="
+      "iPhoneGPX.wasm": "sha256-slxy2WJYuOUcE2jNyku3r8UuZjteHY23cWZbPjoLQZw="
     }
   },
   "debugLevel": 0,
