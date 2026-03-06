@@ -225,21 +225,18 @@
         let isHeadUpActive = false;
         let lastHeading = 0;
 
+        // 地図の向き（ヘッドアップ）トグル
         async function directRequestPermission() {
             if (isHeadUpActive) {
                 resetMapRotation();
                 return;
             }
-
-            if (typeof DeviceOrientationEvent !== 'undefined' &&
-                typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        isHeadUpActive = true;
-                        window.addEventListener('deviceorientation', handleOrientation, true);
-                    }
-                } catch (e) { console.error(e); }
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const permission = await DeviceOrientationEvent.requestPermission();
+                if (permission === 'granted') {
+                    isHeadUpActive = true;
+                    window.addEventListener('deviceorientation', handleOrientation, true);
+                }
             } else {
                 isHeadUpActive = true;
                 window.addEventListener('deviceorientation', handleOrientation, true);
@@ -249,16 +246,13 @@
         function handleOrientation(event) {
             if (!isHeadUpActive) return;
             let targetHeading = event.webkitCompassHeading || (360 - (event.alpha || 0));
-
             let diff = targetHeading - lastHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
-
-            lastHeading = lastHeading + (diff * 0.1);
+            lastHeading = lastHeading + (diff * 0.08); // 0.08: さらに少しマイルドに
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // scaleを1.5に設定
-                mapElement.style.transform = `rotate(${-lastHeading}deg) scale(1.5)`;
+                mapElement.style.transform = `rotate(${-lastHeading}deg) scale(1.6)`;
             }
         }
 
@@ -270,7 +264,6 @@
                 mapElement.style.transform = `rotate(0deg) scale(1.0)`;
             }
         }
-
 
 
         window.startOrientationListener = () => {
