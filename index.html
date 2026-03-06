@@ -53,14 +53,73 @@
             window.currentLayer.addTo(map);
         };
 
+
+
+        let lastCompassHeading = 0;
+
+        // 【新規】iOSのセンサー許可を求め、コンパス連動を開始する関数
+        async function directRequestPermission() {
+            // すでにONの場合は、OFF（ノースアップ）にリセットして終了
+            if (window.isHeadUpInternal) {
+                window.setHeadingMode(false);
+                return;
+            }
+
+            // iOS 13+ のための権限リクエスト
+            if (typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        activateHeading(true);
+                    }
+                } catch (e) { console.error("センサーアクセスエラー:", e); }
+            } else {
+                // AndroidやPC、古いiOSの場合
+                activateHeading(true);
+            }
+        }
+
+        // 回転処理を有効化する内部関数
+        function activateHeading(isEnable) {
+            window.setHeadingMode(isEnable);
+            if (isEnable) {
+                window.addEventListener('deviceorientation', handleCompass, true);
+            } else {
+                window.removeEventListener('deviceorientation', handleCompass);
+            }
+        }
+
+        // 【更新】既存の関数をCSS回転方式に書き換え
         window.setHeadingMode = (isHeadUp) => {
             window.isHeadUpInternal = isHeadUp;
             const mapElement = document.getElementById('map');
             if (!isHeadUp && mapElement) {
-                // ノースアップ時は回転と拡大をリセット
+                // ノースアップ時は回転と拡大を完全にリセット
                 mapElement.style.transform = "rotate(0deg) scale(1.0)";
+                window.removeEventListener('deviceorientation', handleCompass);
             }
         };
+
+        // 【新規】コンパスの値を地図に反映させる関数
+        function handleCompass(event) {
+            if (!window.isHeadUpInternal) return;
+
+            // iOS用のコンパス方位（webkitCompassHeading）を優先使用
+            let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
+
+            // 回転を滑らかにするローパスフィルタ（0.1を小さくするほどゆっくり回ります）
+            let diff = heading - lastCompassHeading;
+            if (diff > 180) diff -= 360;
+            if (diff < -180) diff += 360;
+            lastCompassHeading = lastCompassHeading + (diff * 0.1);
+
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                // rotate はマイナス（方位角の逆）に。scale(1.6)で隙間を埋める
+                mapElement.style.transform = `rotate(${-lastCompassHeading}deg) scale(1.6)`;
+            }
+        }
 
 
         window.startTracking = (dotNetObj) => {
@@ -71,22 +130,22 @@
             watchId = navigator.geolocation.watchPosition(pos => {
                 const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
 
-                if (window.isHeadUpInternal && lastLat !== null) {
-                    const r = Math.PI / 180;
-                    const dLon = (lon - lastLon) * r;
-                    const y = Math.sin(dLon) * Math.cos(lat * r);
-                    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
-                    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+                //if (window.isHeadUpInternal && lastLat !== null) {
+                //    const r = Math.PI / 180;
+                //    const dLon = (lon - lastLon) * r;
+                //    const y = Math.sin(dLon) * Math.cos(lat * r);
+                //    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
+                //    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 
-                    // 精度誤差による小刻みな回転を防ぐ
-                    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
-                        const mapElement = document.getElementById('map');
-                        if (mapElement) {
-                            // map.setBearing の代わりに CSS で回転・拡大
-                            mapElement.style.transform = `rotate(${-bearing}deg) scale(1.6)`;
-                        }
-                    }
-                }
+                //    // 精度誤差による小刻みな回転を防ぐ
+                //    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
+                //        const mapElement = document.getElementById('map');
+                //        if (mapElement) {
+                //            // map.setBearing の代わりに CSS で回転・拡大
+                //            mapElement.style.transform = `rotate(${-bearing}deg) scale(1.6)`;
+                //        }
+                //    }
+                //}
 
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
