@@ -90,37 +90,50 @@
             }
         }
 
-        // 【更新】既存の関数をCSS回転方式に書き換え
+        let lastCompassHeading = 0;
+        let isHeadUpRunning = false; // 内部的なフラグ
+
         window.setHeadingMode = (isHeadUp) => {
             window.isHeadUpInternal = isHeadUp;
             const mapElement = document.getElementById('map');
-            if (!isHeadUp && mapElement) {
-                // ノースアップ時は回転と拡大を完全にリセット
-                mapElement.style.transform = "rotate(0deg) scale(1.0)";
+
+            if (!isHeadUp) {
+                // 【重要】ノースアップ復帰：回転と拡大を完全に消し、アニメーションを一度無効化してリセット
+                isHeadUpRunning = false;
                 window.removeEventListener('deviceorientation', handleCompass);
+                if (mapElement) {
+                    mapElement.style.transition = "transform 0.5s ease-out"; // 戻る時は少しゆっくり
+                    mapElement.style.transform = "rotate(0deg) scale(1.0)";
+                }
+            } else {
+                isHeadUpRunning = true;
             }
         };
 
-        // 【新規】コンパスの値を地図に反映させる関数
         function handleCompass(event) {
-            if (!window.isHeadUpInternal) return;
+            if (!window.isHeadUpInternal || !isHeadUpRunning) return;
 
-            // iOS用のコンパス方位（webkitCompassHeading）を優先使用
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            // 回転を滑らかにするローパスフィルタ（0.1を小さくするほどゆっくり回ります）
             let diff = heading - lastCompassHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
-            lastCompassHeading = lastCompassHeading + (diff * 0.1);
+
+            // 【震え対策：デッドゾーン】
+            // 0.5度以下の微細な変化は「震え」とみなして無視する
+            if (Math.abs(diff) < 0.5) return;
+
+            // 【ヌルっと動かす】
+            // 係数を 0.2 程度に上げ、反応を少し速めつつ収束を早めます
+            lastCompassHeading = lastCompassHeading + (diff * 0.2);
 
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // rotate はマイナス（方位角の逆）に。scale(1.6)で隙間を埋める
+                // scaleは1.6（余白対策）
+                mapElement.style.transition = "transform 0.1s linear"; // 動いている間はリニア
                 mapElement.style.transform = `rotate(${-lastCompassHeading}deg) scale(1.6)`;
             }
         }
-
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);
