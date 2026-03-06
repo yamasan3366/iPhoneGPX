@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "qHt7FB6F",
+  "version": "VFXkEZ2z",
   "assets": [
     {
       "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-LSIkopBQMczUtcTUp0ZYFm3AZjm939EEgWaDWlc/36U=",
+      "hash": "sha256-fauQNfkJJcEpPWTGY5lTjKHyGpmABlGARLLLfiGaHBw=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-ZIx9IuzXoO+6dTzUx0W79efhzRrnqkhsCcIjQu4iZos=",
+      "hash": "sha256-Q1Ht07SEgM/TpllMqU4VvenRcFn4NrYH8pyFv2OaQrc=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
@@ -194,7 +194,7 @@ self.assetsManifest = {
       "url": "_framework/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-1sMOvFL7ByQl8RBXX6zgytCOXatYnsvaulq4DmSL/CY=",
+      "hash": "sha256-erP+PgRxMpKlKH7Z/xd2AUMoYi5W4nqg5o6QU7Fhx7g=",
       "url": "css/app.css"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-9qbNk6xbIr09STIAiqs8VDd90BLE/eSGKbOi0jF6tHg=",
+      "hash": "sha256-3ACbM3az4NQFfVwwmrfsG97MOFHbOZIGHoTC2tj4IzU=",
       "url": "index.html"
     },
     {

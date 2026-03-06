@@ -218,7 +218,66 @@
             }, true);
         };
 
+        // ボタンから直接呼ばれる関数
+        async function directRequestPermission() {
+            console.log("directRequestPermission start");
 
+            if (typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        alert("センサーが許可されました！");
+                        // 許可が取れたので、方位監視を開始
+                        window.isHeadUp = true;
+                        window.startOrientationListener();
+                        // Blazor側の変数も更新したい場合はここから呼び出す
+                        // DotNet.invokeMethodAsync('iPhoneGPX', 'SetHeadUpTrue');
+                    } else {
+                        alert("許可が拒否されました: " + permission);
+                    }
+                } catch (e) {
+                    alert("エラー: " + e);
+                }
+            } else {
+                alert("この端末・ブラウザは許可リクエスト不要、または未対応です。");
+                window.isHeadUp = true;
+                window.startOrientationListener();
+            }
+        }
+
+        window.startOrientationListener = () => {
+            // 既にリスナーがある場合は二重登録を防ぐ
+            window.removeEventListener('deviceorientationabsolute', handleOrientation);
+            window.removeEventListener('deviceorientation', handleOrientation);
+
+            // iOS用のコンパスイベント
+            if ('ondeviceorientationabsolute' in window) {
+                window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+            } else if ('ondeviceorientation' in window) {
+                window.addEventListener('deviceorientation', handleOrientation, true);
+            }
+        };
+
+        function handleOrientation(event) {
+            if (!window.isHeadUp) return;
+
+            let heading = 0;
+            if (event.webkitCompassHeading) {
+                // iOS Safari用
+                heading = event.webkitCompassHeading;
+            } else if (event.alpha) {
+                // Android/その他用
+                heading = 360 - event.alpha;
+            }
+
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                // 地図コンテナを回転
+                mapElement.style.transform = `rotate(${-heading}deg)`;
+            }
+        }
 
     </script>
 </body>
