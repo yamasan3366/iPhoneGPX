@@ -1,8 +1,8 @@
 self.assetsManifest = {
-  "version": "STYhq10I",
+  "version": "oOiMYPHq",
   "assets": [
     {
-      "hash": "sha256-NGSS/e2GFJsrVt7+1YIpEs8k+czyZU/8Gep8ONfz7E0=",
+      "hash": "sha256-UUhEHYLFr+lj8XDWCY7HECt/3ixqGD4F28bZL/8ip6I=",
       "url": "_framework/Microsoft.AspNetCore.Components.Web.wasm"
     },
     {
@@ -10,7 +10,7 @@ self.assetsManifest = {
       "url": "_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm"
     },
     {
-      "hash": "sha256-Kmz33ektY3FbGbhSa8zM8NNpppxnRM/dRIvwXqd/Bx4=",
+      "hash": "sha256-whs+x058yPhIYAAhE9QI5u0FOEproQmU91nk+WqnA1g=",
       "url": "_framework/Microsoft.AspNetCore.Components.wasm"
     },
     {
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-S9rCZGKkMzzpxknbHIgHo7brn9NIs8AAYGny0EQiAi4=",
+      "hash": "sha256-NWl5nZkMPij2QhcUA9ErlnUbCo/gIr7qS8u/zEbLr34=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-DT6EweIh28oFRMVrp1ynboEv6Rr3I3w5IWRrkMZ5mNA=",
+      "hash": "sha256-K8ko3Lq/WDA6HWP57TtGv539S/RK/7sRygPk89tfaQ0=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
@@ -194,7 +194,7 @@ self.assetsManifest = {
       "url": "_framework/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-1sMOvFL7ByQl8RBXX6zgytCOXatYnsvaulq4DmSL/CY=",
+      "hash": "sha256-OhK+5ynBjUMamKiB/lvmhBmR5J3o0LSiWLz6O9l3P5o=",
       "url": "css/app.css"
     },
     {
@@ -210,7 +210,7 @@ self.assetsManifest = {
       "url": "favicon.png"
     },
     {
-      "hash": "sha256-mrZbzuqPVAhJ9DgT6o7XvWGNp7jtKi/TDyh8FLM5v2U=",
+      "hash": "sha256-wiNkAhyNqQXAWfpwJAO2zcsto0zY16iNJSw+hEaXLco=",
       "url": "iPhoneGPX.styles.css"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-p+OwsCefhSlLR64poVX9WDWoC2t5ritf1dJNkrx/mT8=",
+      "hash": "sha256-S5QepIruaALKdH7xAoOTpHjp0HRhjnmShUy8MJ4FV5w=",
       "url": "index.html"
     },
     {

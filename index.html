@@ -55,17 +55,22 @@
 
         window.setHeadingMode = (isHeadUp) => {
             window.isHeadUpInternal = isHeadUp;
-            if (!isHeadUp) map.setBearing(0);
+            const mapElement = document.getElementById('map');
+            if (!isHeadUp && mapElement) {
+                // ノースアップ時は回転と拡大をリセット
+                mapElement.style.transform = "rotate(0deg) scale(1.0)";
+            }
         };
+
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);
             if (!currentWalkPolyline) currentWalkPolyline = L.polyline([], { color: 'blue', weight: 6 }).addTo(map);
 
+            // startTracking 内の回転ロジック
             watchId = navigator.geolocation.watchPosition(pos => {
                 const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
 
-                // ヘッドアップ（移動方向に基づく回転）
                 if (window.isHeadUpInternal && lastLat !== null) {
                     const r = Math.PI / 180;
                     const dLon = (lon - lastLon) * r;
@@ -73,9 +78,13 @@
                     const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
                     const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 
-                    // 精度誤差による小刻みな回転を防ぐ（約5m以上の移動で回転）
+                    // 精度誤差による小刻みな回転を防ぐ
                     if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
-                        map.setBearing(bearing);
+                        const mapElement = document.getElementById('map');
+                        if (mapElement) {
+                            // map.setBearing の代わりに CSS で回転・拡大
+                            mapElement.style.transform = `rotate(${-bearing}deg) scale(1.6)`;
+                        }
                     }
                 }
 
