@@ -1,4 +1,4 @@
-#map {
+/*#map {
     position: absolute !important;
     top: env(safe-area-inset-top) !important;
     bottom: 0;
@@ -7,8 +7,28 @@
     z-index: 1;
     width: 100%;
     height: 100%;
-    transition: transform 0.2s ease-out; /* 回転を滑らかにする */
+    transition: transform 0.2s ease-out;*/ /* 回転を滑らかにする */
+/*}*/
+
+/* 地図を包んでいるコンテナ（通常は main や #app 内） */
+.map-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* はみ出た地図を隠す */
+    position: relative;
 }
+
+.main-content {
+    overflow: hidden;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#map {
+    transition: transform 0.1s linear; /* 動きをより滑らかに */
+}
+
 
 /* 3. 右側UI（レイヤー・ズーム）を最上部に固定 */
 .leaflet-top.leaflet-right {
