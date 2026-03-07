@@ -6,12 +6,15 @@
     right: 0;
     height: 100vh !important;
     z-index: 1;
-    /* transition を transform 全体に適用 */
-    transition: transform 0.2s ease-out;
     transform-origin: center center;
     /* 拡大しても画像がボケないようにする（必要に応じて） */
     will-change: transform;
     touch-action: none; /* ブラウザ標準のパン操作を抑制し、Leafletの制御に任せる */
+    /* transition を transform 全体に適用
+    transition: transform 0.2s ease-out; */
+    width: 100%;
+    height: 100vh;
+    transition: transform 0.1s linear;
 }
 
 /* チェックボックスが選択状態の時のラベル背景を白に固定 */
@@ -251,19 +254,17 @@ body {
     background: #ddd;
 }
 
-/* 三角形マーカーの基本スタイル */
-/* アイコン全体のコンテナ */
+/* マーカーの形を「上向きの三角形」にする */
 .user-location-marker {
+    width: 0 !important;
+    height: 0 !important;
+    border-left: 10px solid transparent !important;
+    border-right: 10px solid transparent !important;
+    border-bottom: 24px solid #003366 !important; /* 濃いネイビー */
+    filter: drop-shadow(0 0 2px white);
     background: none !important;
-    border: none !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none; /* クリックを邪魔しない */
+    border-top: none !important;
 }
-
     /* 濃い青の三角形本体 */
     .user-location-marker:after {
         content: '';
