@@ -15,20 +15,23 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
-        let map, userMarker, currentWalkPolyline;
+        let map = null;
+        let userMarker, currentWalkPolyline;
         let watchId = null;
         let lastLat = null, lastLon = null;
         window.isHeadUpInternal = false;
 
         window.initMap = () => {
-            //if (map) return;
-            // 【地図消失対策】すでに地図が存在している場合は、絶対に再初期化しない
-            if (map && document.getElementById('map').innerHTML !== "") {
+            const mapDiv = document.getElementById('map');
+            if (!mapDiv) return; // 要素がなければ何もしない
+
+            // すでにLeafletが初期化済み（クラスが付与されている）なら再利用する
+            if (mapDiv.classList.contains('leaflet-container')) {
                 setTimeout(() => { map.invalidateSize(); }, 100);
                 return;
             }
 
-            // 標準コントロールをすべて無効化して初期化
+            // 初回初期化
             map = L.map('map', {
                 zoomControl: false,
                 attributionControl: true,
@@ -36,88 +39,56 @@
                 zoom: 13
             });
 
-            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' });
+            const std = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: '国土地理院' }).addTo(map);
             const photo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', { attribution: '写真' });
             const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' });
 
-            std.addTo(map);
-
-            // レイヤー切替も独自ボタンから呼び出すため、各レイヤーを保持
             window.mapLayers = { "std": std, "photo": photo, "osm": osm };
             window.currentLayer = std;
 
+            // ユーザーマーカーの初期化（昨日いただいたコード通り）
             userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
-            setTimeout(() => { map.invalidateSize(); }, 500);
+
+            // 描画を強制確定
+            setTimeout(() => { map.invalidateSize(); }, 200);
         };
 
-        // 自作コントロール用関数
-        window.mapZoomIn = () => map.zoomIn();
-        window.mapZoomOut = () => map.zoomOut();
-        window.switchLayer = (key) => {
-            map.removeLayer(window.currentLayer);
-            window.currentLayer = window.mapLayers[key];
-            window.currentLayer.addTo(map);
+        // 回転とリセットの関数（ここをシンプルに統合します）
+        window.setHeadingMode = (isHeadUp) => {
+            window.isHeadUpInternal = isHeadUp;
+            const mapElement = document.getElementById('map');
+            if (!mapElement) return;
+
+            if (!isHeadUp) {
+                window.removeEventListener('deviceorientation', handleCompass);
+                mapElement.style.transition = "transform 0.4s ease-out";
+                mapElement.style.transform = "rotate(0deg) scale(1.0)";
+            } else {
+                // 回転開始
+                window.addEventListener('deviceorientation', handleCompass, true);
+                mapElement.style.transform = "scale(1.6)";
+            }
         };
 
-
-
-        let lastCompassHeading = 0;
-
-        // iOSのセンサー許可を求め、許可が取れたら回転を開始する
         async function directRequestPermission() {
+            // チェックボックスの状態を直接見て判断
             const isChecked = document.getElementById('heading-check').checked;
-
-            // 1. チェックが外された（ノースアップにする）場合
             if (!isChecked) {
                 window.setHeadingMode(false);
                 return;
             }
 
-            // 2. チェックが入った（ヘッドアップにする）場合
-            if (typeof DeviceOrientationEvent !== 'undefined' &&
-                typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        activateHeading(true); // ここで回転を有効化
-                    } else {
-                        document.getElementById('heading-check').checked = false;
-                    }
-                } catch (e) {
-                    console.error(e);
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const res = await DeviceOrientationEvent.requestPermission();
+                if (res === 'granted') {
+                    window.setHeadingMode(true);
+                } else {
                     document.getElementById('heading-check').checked = false;
                 }
             } else {
-                // AndroidやPCの場合
-                activateHeading(true);
+                window.setHeadingMode(true);
             }
         }
-
-        // 回転処理のスイッチ
-        function activateHeading(isEnable) {
-            window.setHeadingMode(isEnable); // C#側とも同期
-            if (isEnable) {
-                window.addEventListener('deviceorientation', handleCompass, true);
-                const mapElement = document.getElementById('map');
-                if (mapElement) {
-                    mapElement.style.transform = "scale(1.6)"; // 回転時の余白確保
-                }
-            }
-        }
-
-        // リセット処理（前回の修正案を維持）
-        window.setHeadingMode = (isHeadUp) => {
-            window.isHeadUpInternal = isHeadUp;
-            const mapElement = document.getElementById('map');
-
-            if (!isHeadUp) {
-                window.removeEventListener('deviceorientation', handleCompass);
-                if (mapElement) {
-                    mapElement.style.transition = "transform 0.4s ease-out";
-                    mapElement.style.transform = "rotate(0deg) scale(1.0)";
-                }
-            }
-        };
 
         function startHeadingMode() {
             window.isHeadUpInternal = true;
@@ -129,11 +100,18 @@
         }
 
 
+        // 回転処理を有効化する内部関数
+        function activateHeading(isEnable) {
+            window.setHeadingMode(isEnable);
+            if (isEnable) {
+                window.addEventListener('deviceorientation', handleCompass, true);
+            } else {
+                window.removeEventListener('deviceorientation', handleCompass);
+            }
+        }
 
         let lastCompassHeading = 0;
         let isHeadUpRunning = false; // 内部的なフラグ
-
-
 
 
         function handleCompass(event) {
@@ -202,6 +180,10 @@
             }, null, { enableHighAccuracy: true });
         };
 
+        window.setHeadingMode = (isHeadUp) => {
+            window.isHeadUpInternal = isHeadUp;
+            if (!isHeadUp) map.setBearing(0);
+        };
 
         window.stopTracking = () => {
             if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
