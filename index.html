@@ -71,27 +71,47 @@
         };
 
         async function directRequestPermission() {
-            // チェックボックスの状態を直接見て判断
-            const isChecked = document.getElementById('heading-check').checked;
-            if (!isChecked) {
-                window.setHeadingMode(false);
+            // 1. まず現在のチェック状態を確認
+            const chk = document.getElementById('heading-check');
+            if (!chk) return;
+
+            // 2. オフになったなら、回転を止めて北に戻す
+            if (!chk.checked) {
+                window.isHeadUpInternal = false;
+                window.removeEventListener('deviceorientation', handleCompass);
+                const mapElement = document.getElementById('map');
+                if (mapElement) {
+                    mapElement.style.transition = "transform 0.4s ease-out";
+                    mapElement.style.transform = "rotate(0deg) scale(1.0)";
+                }
                 return;
             }
 
+            // 3. オンになったなら、回転を開始する
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                // --- iPhone (iOS 13+) の場合 ---
+                // iPhoneの場合
                 const res = await DeviceOrientationEvent.requestPermission();
                 if (res === 'granted') {
-                    // 許可されたので回転開始
-                    startRotation();
+                    setupRotation();
                 } else {
-                    // 拒否されたらスイッチを戻す
-                    document.getElementById('heading-check').checked = false;
+                    chk.checked = false;
                 }
             } else {
-                // --- Android, PC, 古いiOS の場合 ---
-                // 許可ダイアログは不要なので、即座に回転開始
-                startRotation();
+                // Android/PCの場合
+                setupRotation();
+            }
+        }
+
+        // 回転のセットアップ
+        function setupRotation() {
+            window.isHeadUpInternal = true;
+            // ここでセンサーの監視をスタートさせる（これが重要！）
+            window.addEventListener('deviceorientation', handleCompass, true);
+
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                mapElement.style.transition = "none"; // 回転中はスムーズに動かすため transition を切る
+                mapElement.style.transform = "scale(1.6)";
             }
         }
 
@@ -130,32 +150,31 @@
         let isHeadUpRunning = false; // 内部的なフラグ
 
 
-        // 磁気センサーの値を監視して地図を回転させる
+        // 磁気センサーで地図を回す
         function handleCompass(event) {
+            // 【重要】スイッチがONの時だけ処理する
             if (!window.isHeadUpInternal) return;
 
-            // iOS用の方位（webkitCompassHeading）または通常の alpha
+            // iPhone用の方位を取得
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            // 【震え対策】前回の値を保持して、滑らかに動かす（フィルタリング）
-            if (typeof lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
+            if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
 
             let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
 
-            // 0.5度以下の微細な動きは無視して「震え」を抑える
+            // 遊び（デッドゾーン）を作って震えを防止
             if (Math.abs(diff) < 0.5) return;
 
             window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
 
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // 北を上にするためマイナス回転、余白のために1.6倍拡大
+                // ここで実際に地図を回転・拡大させる
                 mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
         }
-
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);
@@ -164,24 +183,6 @@
             // startTracking 内の回転ロジック
             watchId = navigator.geolocation.watchPosition(pos => {
                 const { latitude: lat, longitude: lon, altitude: ele } = pos.coords;
-
-                //if (window.isHeadUpInternal && lastLat !== null) {
-                //    const r = Math.PI / 180;
-                //    const dLon = (lon - lastLon) * r;
-                //    const y = Math.sin(dLon) * Math.cos(lat * r);
-                //    const x = Math.cos(lastLat * r) * Math.sin(lat * r) - Math.sin(lastLat * r) * Math.cos(lat * r) * Math.cos(dLon);
-                //    const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-
-                //    // 精度誤差による小刻みな回転を防ぐ
-                //    if (Math.abs(lat - lastLat) > 0.00005 || Math.abs(lon - lastLon) > 0.00005) {
-                //        const mapElement = document.getElementById('map');
-                //        if (mapElement) {
-                //            // map.setBearing の代わりに CSS で回転・拡大
-                //            mapElement.style.transform = `rotate(${-bearing}deg) scale(1.6)`;
-                //        }
-                //    }
-                //}
-
                 map.setView([lat, lon]);
                 userMarker.setLatLng([lat, lon]);
                 currentWalkPolyline.addLatLng([lat, lon]);
