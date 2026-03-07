@@ -285,16 +285,43 @@ body {
     }
 }
 
-/* メニュー内の各ボタンを大きく、間隔を広くする */
+/* 1. 左側のズームボタンなどを大きくする */
+.leaflet-touch .leaflet-bar a {
+    width: 50px !important; /* 標準は30-34px */
+    height: 50px !important;
+    line-height: 50px !important;
+    font-size: 1.5rem !important;
+}
+
+/* 2. メニューパネル内のボタン配置を修正 */
 .btn-heading-label,
 .btn-primary,
 .btn-success,
 .btn-danger {
-    padding-top: 15px !important; /* 上下の内側余白を増やして高さを出す */
-    padding-bottom: 15px !important;
-    margin-bottom: 12px !important; /* ボタン同士の間隔を空ける */
-    font-size: 1.1rem !important; /* 文字も少し大きくして視認性アップ */
-    border-radius: 12px !important; /* 角を少し丸くして指掛かりを良くする */
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 6px !important; /* 間隔を「あきすぎ」から「適度」へ */
+    display: flex !important;
+    align-items: center;
+    justify-content: center; /* アイコンと文字を中央に寄せる */
+    font-size: 1.1rem !important;
+}
+
+/* アイコン自体の位置微調整 */
+.bi {
+    margin-right: 8px !important;
+    margin-left: 0 !important;
+}
+
+/* 3. パネルの頭が下がりすぎているのを修正 */
+/* Offcanvasやパネルのコンテナの余白を削ります */
+.offcanvas-body {
+    padding-top: 0.5rem !important; /* 上の余白を最小限に */
+}
+
+.offcanvas-header {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 /* 地図の向きボタン（label）専用の調整 */
