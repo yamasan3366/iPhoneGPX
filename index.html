@@ -114,30 +114,32 @@
         let isHeadUpRunning = false; // 内部的なフラグ
 
 
+        // 磁気センサーの値を監視して地図を回転させる
         function handleCompass(event) {
-            if (!window.isHeadUpInternal || !isHeadUpRunning) return;
+            if (!window.isHeadUpInternal) return;
 
+            // iOS用の方位（webkitCompassHeading）または通常の alpha
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            let diff = heading - lastCompassHeading;
+            // 【震え対策】前回の値を保持して、滑らかに動かす（フィルタリング）
+            if (typeof lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
+
+            let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
 
-            // 【震え対策：デッドゾーン】
-            // 0.5度以下の微細な変化は「震え」とみなして無視する
+            // 0.5度以下の微細な動きは無視して「震え」を抑える
             if (Math.abs(diff) < 0.5) return;
 
-            // 【ヌルっと動かす】
-            // 係数を 0.2 程度に上げ、反応を少し速めつつ収束を早めます
-            lastCompassHeading = lastCompassHeading + (diff * 0.2);
+            window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
 
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // scaleは1.6（余白対策）
-                mapElement.style.transition = "transform 0.1s linear"; // 動いている間はリニア
-                mapElement.style.transform = `rotate(${-lastCompassHeading}deg) scale(1.6)`;
+                // 北を上にするためマイナス回転、余白のために1.6倍拡大
+                mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
         }
+
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);
