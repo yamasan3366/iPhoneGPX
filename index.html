@@ -46,21 +46,19 @@
             window.mapLayers = { "std": std, "photo": photo, "osm": osm };
             window.currentLayer = std;
 
-            // 【新】 CSSで三角形を作る DivIcon を定義して追加
-            const locationIcon = L.divIcon({
-                className: 'user-location-marker', // CSSでスタイルを定義
-                iconSize: [24, 24], // アイコンの大きさ
-                iconAnchor: [12, 12] // 中心点を合わせる
+            // アイコンを定義
+            const triangleIcon = L.divIcon({
+                className: 'user-location-marker',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12] // 中心で固定
             });
 
-            userMarker = L.marker([0, 0], { icon: triangleIcon, zIndexOffset: 1000 }).addTo(map);
+            // マーカーを作成（zIndexを高くして絶対に上に表示）
+            userMarker = L.marker([0, 0], {
+                icon: triangleIcon,
+                zIndexOffset: 1000
+            }).addTo(map);
 
-        //    // 【重要】SVG要素として三角形を直接作る（確実に表示するため）
-        //    const trianglePoints = "0,10 -8,25 8,25"; // 三角形の頂点座標
-        //    userMarker.options.setRotationAngle = 0; // カスタムプロパティ
-
-        //    // 描画を強制確定
-        //    setTimeout(() => { map.invalidateSize(); }, 200);
         };
 
         // 回転とリセットの関数（ここをシンプルに統合します）
@@ -161,13 +159,11 @@
 
 
         // 磁気センサーで地図を回す
-        // 2. handleCompass は「地図を回すだけ」にします
         function handleCompass(event) {
             if (!window.isHeadUpInternal) return;
 
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            // スムーズな数値計算のみ
             if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
             let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
@@ -176,11 +172,11 @@
 
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // 地図全体を回転させる
+                // 地図全体の回転のみを行う。マーカーには一切触れない。
                 mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
-            // ★マーカーを個別に JS で回す処理は、バグの原因なので削除しました
         }
+
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);

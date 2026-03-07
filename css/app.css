@@ -261,29 +261,25 @@ body {
     background: #ddd;
 }
 
-/* マーカーの形を「上向きの三角形」にする */
-/* マーカーのコンテナ（Leafletが位置を決める要素） */
+/* 既存の .user-location-marker 関連をすべて消して、これに差し替えてください */
 .user-location-marker {
     background: none !important;
     border: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-    /* 三角形本体：親の回転（地図の回転）を「打ち消す」設定 */
     .user-location-marker::after {
         content: '';
         display: block;
         width: 0;
         height: 0;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-bottom: 24px solid #003366; /* 濃いネイビー */
-        filter: drop-shadow(0 0 2px white);
-        /* 【重要】この一行で、地図が何度回っても、三角形は常に画面の上を向きます */
-        transform: rotate(calc(var(--map-rotation, 0deg) * -1));
-        /* 上記が効かない環境向けの予備：シンプルに画面固定 */
-        position: fixed;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-bottom: 22px solid #003366; /* 濃いネイビー */
+        filter: drop-shadow(0 0 1.5px white);
     }
-
 
 /* 横向き時：高さ110pxに凝縮 */
 @media (orientation: landscape) {
