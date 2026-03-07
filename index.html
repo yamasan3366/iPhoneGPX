@@ -162,24 +162,6 @@
         let isHeadUpRunning = false; // 内部的なフラグ
 
 
-        // 磁気センサーで地図を回す
-        //function handleCompass(event) {
-        //    if (!window.isHeadUpInternal) return;
-
-        //    let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
-
-        //    if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
-        //    let diff = heading - window.lastCompassHeading;
-        //    if (diff > 180) diff -= 360;
-        //    if (diff < -180) diff += 360;
-        //    window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
-
-        //    const mapElement = document.getElementById('map');
-        //    if (mapElement) {
-        //        // 地図全体の回転のみを行う。マーカーには一切触れない。
-        //        mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
-        //    }
-        //}
         function handleCompass(event) {
             if (!window.isHeadUpInternal) return;
 

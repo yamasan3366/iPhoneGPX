@@ -284,3 +284,34 @@ body {
         line-height: 20px;
     }
 }
+
+/* メニュー内の各ボタンを大きく、間隔を広くする */
+.btn-heading-label,
+.btn-primary,
+.btn-success,
+.btn-danger {
+    padding-top: 15px !important; /* 上下の内側余白を増やして高さを出す */
+    padding-bottom: 15px !important;
+    margin-bottom: 12px !important; /* ボタン同士の間隔を空ける */
+    font-size: 1.1rem !important; /* 文字も少し大きくして視認性アップ */
+    border-radius: 12px !important; /* 角を少し丸くして指掛かりを良くする */
+}
+
+/* 地図の向きボタン（label）専用の調整 */
+.btn-heading-label {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px; /* 最小の高さを確保 */
+}
+
+/* ボタン内のアイコンをさらに強調 */
+.bi {
+    font-size: 1.5rem !important;
+    margin-right: 12px !important;
+}
+
+/* Home.razor の構造に合わせた微調整 */
+.mb-2 {
+    margin-bottom: 1rem !important; /* 外側の余白も少し広げる */
+}
