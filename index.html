@@ -79,24 +79,32 @@
             }
 
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // --- iPhone (iOS 13+) の場合 ---
                 const res = await DeviceOrientationEvent.requestPermission();
-            //    if (res === 'granted') {
-            //        window.setHeadingMode(true);
-            //    } else {
-            //        document.getElementById('heading-check').checked = false;
-            //    }
-
                 if (res === 'granted') {
-                    window.isHeadUpInternal = true; // フラグを立てる
-                    // ここでリスナーを登録することで、handleCompass が走り出します
-                    window.addEventListener('deviceorientation', handleCompass, true);
-                    document.getElementById('map').style.transform = "scale(1.6)";
+                    // 許可されたので回転開始
+                    startRotation();
+                } else {
+                    // 拒否されたらスイッチを戻す
+                    document.getElementById('heading-check').checked = false;
                 }
-
             } else {
-                window.setHeadingMode(true);
+                // --- Android, PC, 古いiOS の場合 ---
+                // 許可ダイアログは不要なので、即座に回転開始
+                startRotation();
             }
         }
+
+        // 【共通化】回転を開始する処理を一箇所にまとめる
+        function startRotation() {
+            window.isHeadUpInternal = true;
+            window.addEventListener('deviceorientation', handleCompass, true);
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                mapElement.style.transform = "scale(1.6)";
+            }
+        }
+
 
         function startHeadingMode() {
             window.isHeadUpInternal = true;
