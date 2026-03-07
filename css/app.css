@@ -342,3 +342,50 @@ body {
 .mb-2 {
     margin-bottom: 1rem !important; /* 外側の余白も少し広げる */
 }
+
+/* 左側のボタンコンテナ（メニュー・現在地・グラフなどのボタン） */
+.leaflet-control-custom,
+.leaflet-bar a {
+    width: 60px !important; /* 5cmに近い操作感にするため大幅アップ */
+    height: 60px !important;
+    line-height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important; /* アイコンをど真ん中に */
+}
+
+    /* ボタンの中のアイコンを巨大化し、ズレを解消 */
+    .leaflet-control-custom i,
+    .leaflet-bar a i {
+        font-size: 2rem !important; /* 手袋でも見やすく */
+        margin: 0 !important; /* 左寄りを解消 */
+        padding: 0 !important;
+    }
+
+/* メニュー内のボタン同士の隙間を詰める */
+.offcanvas-body .mb-2 {
+    margin-bottom: 4px !important; /* 16pxあった隙間を4pxに縮小 */
+}
+
+.offcanvas-body .btn {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* パネル自体の位置と余白をリセット */
+.offcanvas-header {
+    padding-top: 0px !important; /* 上の隙間をゼロに */
+    padding-bottom: 0px !important;
+    margin-top: 0px !important;
+    min-height: 40px !important; /* 最小限の高さ */
+}
+
+.offcanvas-body {
+    padding-top: 4px !important; /* ボディの開始位置を上げる */
+}
+
+/* タイトルと閉じるボタンのサイズを調整して上に詰める */
+.offcanvas-title {
+    font-size: 0.9rem !important;
+    line-height: 1 !important;
+}
