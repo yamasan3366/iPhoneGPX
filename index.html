@@ -164,29 +164,33 @@
 
         // 磁気センサーで地図を回す
         function handleCompass(event) {
-            // 【重要】スイッチがONの時だけ処理する
             if (!window.isHeadUpInternal) return;
 
-            // iPhone用の方位を取得
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
+            // スムーズな回転のための計算（既存通り）
             if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
-
             let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
-
-            // 遊び（デッドゾーン）を作って震えを防止
             if (Math.abs(diff) < 0.5) return;
-
             window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
 
+            // 1. 地図全体の回転（ヘッドアップ）
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // ここで実際に地図を回転・拡大させる
                 mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
+
+            // 2. 【新規】三角形マーカーを「常にスマホの先端」に向ける
+            // 地図が -heading 回転しているので、マーカーを +heading 回転させて相殺し、
+            // 結果として画面の上（スマホのヘッド方向）を向かせます。
+            const markerElement = document.querySelector('.user-location-marker');
+            if (markerElement) {
+                markerElement.style.transform = `rotate(${window.lastCompassHeading}deg)`;
+            }
         }
+
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);
