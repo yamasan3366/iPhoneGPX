@@ -80,11 +80,19 @@
 
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 const res = await DeviceOrientationEvent.requestPermission();
+            //    if (res === 'granted') {
+            //        window.setHeadingMode(true);
+            //    } else {
+            //        document.getElementById('heading-check').checked = false;
+            //    }
+
                 if (res === 'granted') {
-                    window.setHeadingMode(true);
-                } else {
-                    document.getElementById('heading-check').checked = false;
+                    window.isHeadUpInternal = true; // フラグを立てる
+                    // ここでリスナーを登録することで、handleCompass が走り出します
+                    window.addEventListener('deviceorientation', handleCompass, true);
+                    document.getElementById('map').style.transform = "scale(1.6)";
                 }
+
             } else {
                 window.setHeadingMode(true);
             }
