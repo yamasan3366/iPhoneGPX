@@ -14,6 +14,13 @@
     touch-action: none; /* ブラウザ標準のパン操作を抑制し、Leafletの制御に任せる */
 }
 
+/* チェックボックスが選択状態の時のラベル背景を白に固定 */
+#heading-check:checked + .btn-heading-label {
+    background-color: white !important;
+    color: #333 !important; /* 文字色も維持 */
+    box-shadow: none !important; /* 押し込まれたような影も消す */
+}
+
 /* 回転した地図が画面からはみ出すのを防ぎ、バウンスを抑制 */
 body {
     margin: 0;
