@@ -11,6 +11,7 @@
     transform-origin: center center;
     /* 拡大しても画像がボケないようにする（必要に応じて） */
     will-change: transform;
+    touch-action: none; /* ブラウザ標準のパン操作を抑制し、Leafletの制御に任せる */
 }
 
 /* 回転した地図が画面からはみ出すのを防ぎ、バウンスを抑制 */
