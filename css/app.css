@@ -251,6 +251,33 @@ body {
     background: #ddd;
 }
 
+/* 三角形マーカーの基本スタイル */
+.user-location-marker {
+    position: relative;
+    background: none;
+    border: none;
+}
+
+    /* 三角形本体（CSS triangle ハック） */
+    .user-location-marker:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 4px; /* 中心に寄せる調整 */
+        width: 0;
+        height: 0;
+        /* 三角形の形と色（青）を設定 */
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 20px solid #007bff; /* 先端が上を向く三角形 */
+        /* 白い縁取り（視認性向上） */
+        filter: drop-shadow(0 0 1px white) drop-shadow(0 0 1px white);
+        /* 初期状態の向き（北） */
+        transform: rotate(0deg);
+        transform-origin: center 70%; /* 回転の中心を少し下（三角形の重心付近）にずらす */
+    }
+
+
 /* 横向き時：高さ110pxに凝縮 */
 @media (orientation: landscape) {
     .elevation-chart-container {

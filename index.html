@@ -47,7 +47,19 @@
             window.currentLayer = std;
 
             // ユーザーマーカーの初期化（昨日いただいたコード通り）
-            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
+            //userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
+
+            // 【新】 CSSで三角形を作る DivIcon を定義して追加
+            const locationIcon = L.divIcon({
+                className: 'user-location-marker', // CSSでスタイルを定義
+                iconSize: [24, 24], // アイコンの大きさ
+                iconAnchor: [12, 12] // 中心点を合わせる
+            });
+
+            userMarker = L.marker([0, 0], {
+                icon: locationIcon,
+                zIndexOffset: 1000 // 他のレイヤーより上に表示
+            }).addTo(map);
 
             // 描画を強制確定
             setTimeout(() => { map.invalidateSize(); }, 200);
