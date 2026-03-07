@@ -53,9 +53,13 @@
                 iconAnchor: [12, 12] // 中心で固定
             });
 
-            // マーカーを作成（zIndexを高くして絶対に上に表示）
-            userMarker = L.marker([0, 0], {
-                icon: triangleIcon,
+            // 初期化: 標準の円形マーカーに戻します
+            userMarker = L.circleMarker([0, 0], {
+                radius: 9,           // 少し大きめで見やすく
+                fillColor: "#003366", // ご希望の濃いネイビー
+                color: "#ffffff",     // 白い縁取り
+                weight: 2,            // 縁取りの太さ
+                fillOpacity: 1,       // 塗りつぶし
                 zIndexOffset: 1000
             }).addTo(map);
 
@@ -159,11 +163,29 @@
 
 
         // 磁気センサーで地図を回す
+        //function handleCompass(event) {
+        //    if (!window.isHeadUpInternal) return;
+
+        //    let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
+
+        //    if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
+        //    let diff = heading - window.lastCompassHeading;
+        //    if (diff > 180) diff -= 360;
+        //    if (diff < -180) diff += 360;
+        //    window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
+
+        //    const mapElement = document.getElementById('map');
+        //    if (mapElement) {
+        //        // 地図全体の回転のみを行う。マーカーには一切触れない。
+        //        mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
+        //    }
+        //}
         function handleCompass(event) {
             if (!window.isHeadUpInternal) return;
 
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
+            // スムーズな数値計算
             if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
             let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
@@ -172,10 +194,10 @@
 
             const mapElement = document.getElementById('map');
             if (mapElement) {
-                // 地図全体の回転のみを行う。マーカーには一切触れない。
                 mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
         }
+
 
 
         window.startTracking = (dotNetObj) => {
