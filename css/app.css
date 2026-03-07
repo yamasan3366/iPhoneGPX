@@ -252,32 +252,34 @@ body {
 }
 
 /* 三角形マーカーの基本スタイル */
-/* アイコンのコンテナ */
+/* アイコン全体のコンテナ */
 .user-location-marker {
-    background: none;
-    border: none;
-    display: flex;
+    background: none !important;
+    border: none !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
     justify-content: center;
     align-items: center;
-    transition: transform 0.1s linear; /* 回転を滑らかに */
+    pointer-events: none; /* クリックを邪魔しない */
 }
 
-    /* 三角形本体（より濃い青） */
+    /* 濃い青の三角形本体 */
     .user-location-marker:after {
         content: '';
         display: block;
         width: 0;
         height: 0;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-bottom: 24px solid #0047ab; /* 濃いロイヤルブルー */
-        /* 視認性を高めるための白い縁取りを強化 */
-        filter: drop-shadow(0 0 2px white);
-        /* 中心軸の調整 */
+        /* 左右を少し細くして鋭い印象に */
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 22px solid #003366; /* より深いネイビーブルー */
+        /* 白い縁取りをよりハッキリさせる */
+        filter: drop-shadow(0 0 2px #ffffff);
+        /* 回転の中心を三角形の底辺中央に設定 */
+        transform-origin: 50% 80%;
         transform: translateY(-4px);
     }
-
-
 
 /* 横向き時：高さ110pxに凝縮 */
 @media (orientation: landscape) {
