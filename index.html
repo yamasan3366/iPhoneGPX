@@ -46,23 +46,11 @@
             window.mapLayers = { "std": std, "photo": photo, "osm": osm };
             window.currentLayer = std;
 
-            // アイコンを定義
-            const triangleIcon = L.divIcon({
-                className: 'user-location-marker',
-                iconSize: [24, 24],
-                iconAnchor: [12, 12] // 中心で固定
-            });
+            // ユーザーマーカーの初期化（昨日いただいたコード通り）
+            userMarker = L.circleMarker([0, 0], { radius: 8, color: 'white', fillColor: '#007bff', fillOpacity: 1, weight: 2 }).addTo(map);
 
-            // 初期化: 標準の円形マーカーに戻します
-            userMarker = L.circleMarker([0, 0], {
-                radius: 9,           // 少し大きめで見やすく
-                fillColor: "#003366", // ご希望の濃いネイビー
-                color: "#ffffff",     // 白い縁取り
-                weight: 2,            // 縁取りの太さ
-                fillOpacity: 1,       // 塗りつぶし
-                zIndexOffset: 1000
-            }).addTo(map);
-
+            // 描画を強制確定
+            setTimeout(() => { map.invalidateSize(); }, 200);
         };
 
         // 回転とリセットの関数（ここをシンプルに統合します）
@@ -162,25 +150,31 @@
         let isHeadUpRunning = false; // 内部的なフラグ
 
 
+        // 磁気センサーで地図を回す
         function handleCompass(event) {
+            // 【重要】スイッチがONの時だけ処理する
             if (!window.isHeadUpInternal) return;
 
+            // iPhone用の方位を取得
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            // スムーズな数値計算
             if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
+
             let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
+
+            // 遊び（デッドゾーン）を作って震えを防止
+            if (Math.abs(diff) < 0.5) return;
+
             window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
 
             const mapElement = document.getElementById('map');
             if (mapElement) {
+                // ここで実際に地図を回転・拡大させる
                 mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
         }
-
-
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);

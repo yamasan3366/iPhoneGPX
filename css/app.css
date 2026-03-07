@@ -1,15 +1,16 @@
-/* 地図の回転設定のみ維持 */
+/* 地図本体：iPhoneでの消失を防ぎ、回転に対応させる */
 #map {
-    width: 100%;
-    height: 100vh;
-    transition: transform 0.1s linear;
-}
-
-/* チェックボックスが選択状態の時のラベル背景を白に固定 */
-#heading-check:checked + .btn-heading-label {
-    background-color: white !important;
-    color: #333 !important; /* 文字色も維持 */
-    box-shadow: none !important; /* 押し込まれたような影も消す */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0;
+    right: 0;
+    height: 100vh !important;
+    z-index: 1;
+    /* transition を transform 全体に適用 */
+    transition: transform 0.2s ease-out;
+    transform-origin: center center;
+    /* 拡大しても画像がボケないようにする（必要に応じて） */
+    will-change: transform;
 }
 
 /* 回転した地図が画面からはみ出すのを防ぎ、バウンスを抑制 */
@@ -242,26 +243,6 @@ body {
     background: #ddd;
 }
 
-/* 既存の .user-location-marker 関連をすべて消して、これに差し替えてください */
-.user-location-marker {
-    background: none !important;
-    border: none !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-    .user-location-marker::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 0;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        border-bottom: 22px solid #003366; /* 濃いネイビー */
-        filter: drop-shadow(0 0 1.5px white);
-    }
-
 /* 横向き時：高さ110pxに凝縮 */
 @media (orientation: landscape) {
     .elevation-chart-container {
@@ -283,109 +264,4 @@ body {
         height: 20px;
         line-height: 20px;
     }
-}
-
-/* 1. 左側のズームボタンなどを大きくする */
-.leaflet-touch .leaflet-bar a {
-    width: 50px !important; /* 標準は30-34px */
-    height: 50px !important;
-    line-height: 50px !important;
-    font-size: 1.5rem !important;
-}
-
-/* 2. メニューパネル内のボタン配置を修正 */
-.btn-heading-label,
-.btn-primary,
-.btn-success,
-.btn-danger {
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
-    margin-bottom: 6px !important; /* 間隔を「あきすぎ」から「適度」へ */
-    display: flex !important;
-    align-items: center;
-    justify-content: center; /* アイコンと文字を中央に寄せる */
-    font-size: 1.1rem !important;
-}
-
-/* アイコン自体の位置微調整 */
-.bi {
-    margin-right: 8px !important;
-    margin-left: 0 !important;
-}
-
-/* 3. パネルの頭が下がりすぎているのを修正 */
-/* Offcanvasやパネルのコンテナの余白を削ります */
-.offcanvas-body {
-    padding-top: 0.5rem !important; /* 上の余白を最小限に */
-}
-
-.offcanvas-header {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* 地図の向きボタン（label）専用の調整 */
-.btn-heading-label {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    min-height: 60px; /* 最小の高さを確保 */
-}
-
-/* ボタン内のアイコンをさらに強調 */
-.bi {
-    font-size: 1.5rem !important;
-    margin-right: 12px !important;
-}
-
-/* Home.razor の構造に合わせた微調整 */
-.mb-2 {
-    margin-bottom: 1rem !important; /* 外側の余白も少し広げる */
-}
-
-/* 左側のボタンコンテナ（メニュー・現在地・グラフなどのボタン） */
-.leaflet-control-custom,
-.leaflet-bar a {
-    width: 60px !important; /* 5cmに近い操作感にするため大幅アップ */
-    height: 60px !important;
-    line-height: 60px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important; /* アイコンをど真ん中に */
-}
-
-    /* ボタンの中のアイコンを巨大化し、ズレを解消 */
-    .leaflet-control-custom i,
-    .leaflet-bar a i {
-        font-size: 2rem !important; /* 手袋でも見やすく */
-        margin: 0 !important; /* 左寄りを解消 */
-        padding: 0 !important;
-    }
-
-/* メニュー内のボタン同士の隙間を詰める */
-.offcanvas-body .mb-2 {
-    margin-bottom: 4px !important; /* 16pxあった隙間を4pxに縮小 */
-}
-
-.offcanvas-body .btn {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* パネル自体の位置と余白をリセット */
-.offcanvas-header {
-    padding-top: 0px !important; /* 上の隙間をゼロに */
-    padding-bottom: 0px !important;
-    margin-top: 0px !important;
-    min-height: 40px !important; /* 最小限の高さ */
-}
-
-.offcanvas-body {
-    padding-top: 4px !important; /* ボディの開始位置を上げる */
-}
-
-/* タイトルと閉じるボタンのサイズを調整して上に詰める */
-.offcanvas-title {
-    font-size: 0.9rem !important;
-    line-height: 1 !important;
 }
