@@ -53,21 +53,14 @@
                 iconAnchor: [12, 12] // 中心点を合わせる
             });
 
-            // 三角形の形をSVGパスで定義（濃いネイビー）
-            userMarker = L.SVGMarker ? new L.SVGMarker([0, 0]) : L.circleMarker([0, 0], {
-                radius: 10,
-                fillColor: "#003366",
-                color: "#ffffff",
-                weight: 2,
-                fillOpacity: 1
-            }).addTo(map);
+            userMarker = L.marker([0, 0], { icon: triangleIcon, zIndexOffset: 1000 }).addTo(map);
 
-            // 【重要】SVG要素として三角形を直接作る（確実に表示するため）
-            const trianglePoints = "0,10 -8,25 8,25"; // 三角形の頂点座標
-            userMarker.options.setRotationAngle = 0; // カスタムプロパティ
+        //    // 【重要】SVG要素として三角形を直接作る（確実に表示するため）
+        //    const trianglePoints = "0,10 -8,25 8,25"; // 三角形の頂点座標
+        //    userMarker.options.setRotationAngle = 0; // カスタムプロパティ
 
-            // 描画を強制確定
-            setTimeout(() => { map.invalidateSize(); }, 200);
+        //    // 描画を強制確定
+        //    setTimeout(() => { map.invalidateSize(); }, 200);
         };
 
         // 回転とリセットの関数（ここをシンプルに統合します）
@@ -168,36 +161,26 @@
 
 
         // 磁気センサーで地図を回す
-        // 2. 回転処理: マーカーの「見た目」を直接操作せず、Leafletのアイコンとして扱う
+        // 2. handleCompass は「地図を回すだけ」にします
         function handleCompass(event) {
-            if (!window.isHeadUpInternal || !userMarker) return;
+            if (!window.isHeadUpInternal) return;
 
             let heading = event.webkitCompassHeading || (360 - (event.alpha || 0));
 
-            // スムーズな計算
+            // スムーズな数値計算のみ
             if (typeof window.lastCompassHeading === 'undefined') window.lastCompassHeading = heading;
             let diff = heading - window.lastCompassHeading;
             if (diff > 180) diff -= 360;
             if (diff < -180) diff += 360;
             window.lastCompassHeading = window.lastCompassHeading + (diff * 0.2);
 
-            // A. 地図の回転（ヘッドアップ）
-            const mapDiv = document.getElementById('map');
-            if (mapDiv) {
-                mapDiv.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                // 地図全体を回転させる
+                mapElement.style.transform = `rotate(${-window.lastCompassHeading}deg) scale(1.6)`;
             }
-
-            // B. 三角形マーカーの回転（スマホのヘッドを指す）
-            // CSSの transform を直接いじらず、Leafletのマーカー要素に角度をセットする
-            const el = userMarker.getElement();
-            if (el) {
-                // 地図の回転を打ち消して「真上」に向かせる
-                // 既存の座標計算を壊さないよう、rotate だけを付加
-                el.style.transformOrigin = "center";
-                el.style.transform += ` rotate(${window.lastCompassHeading}deg)`;
-            }
+            // ★マーカーを個別に JS で回す処理は、バグの原因なので削除しました
         }
-
 
         window.startTracking = (dotNetObj) => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);

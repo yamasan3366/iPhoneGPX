@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "n83phoKS",
+  "version": "Ucwq8RYz",
   "assets": [
     {
       "hash": "sha256-UUhEHYLFr+lj8XDWCY7HECt/3ixqGD4F28bZL/8ip6I=",
@@ -194,7 +194,7 @@ self.assetsManifest = {
       "url": "_framework/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-djtyuStsQ5Oz+W9mCk3aEWK6+e1WB6TEUbgBcmcvUI0=",
+      "hash": "sha256-P+FYmjp8WevacMVJx9iH5kLIxBXx6EbzpnMFjrPVP9A=",
       "url": "css/app.css"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "icon-512.png"
     },
     {
-      "hash": "sha256-zu+UAz9i4fKDQ5X7hRg23NgFFjt6YhVB8o05E0PT0iU=",
+      "hash": "sha256-00JrSw+eGlqqLXc47OTfYYH5N+h+H2231g4QE6PvHfM=",
       "url": "index.html"
     },
     {
