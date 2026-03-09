@@ -115,6 +115,16 @@ body {
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
+    /* 2. メニューパネル内の各ボタン（GPXを開く、保存など） */
+    .side-menu-panel .btn {
+        height: 48px !important; /* 「地図の向き」ラベルと同じ高さに統一 */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 15px !important; /* 14pxから15pxへ：視認性向上 */
+        margin-bottom: 8px; /* 元の間隔を維持 */
+    }
+    
 /* 右側の特大ズームコントロール */
 .zoom-controls {
     position: fixed;
@@ -146,11 +156,6 @@ body {
     background-color: #6c757d !important;
     opacity: 0.5;
     pointer-events: none;
-}
-
-/* 以前のボタン標題（メニュー内） */
-.side-menu-panel .btn {
-    font-size: 14px !important;
 }
 
 /* ズームボタンが重ならないよう位置調整（レイヤーボタンの下） */
