@@ -56,8 +56,8 @@ body {
 
 /* 2. Šeƒ{ƒ^ƒ“‚ğˆê‰ñ‚è¬‚³‚­(–ñ40px) */
 .action-btn, .btn-rec-start, .btn-rec-stop {
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     border-radius: 8px;
     display: flex;
     align-items: center;
