@@ -225,6 +225,24 @@
             a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 5000);
         };
+
+        // レイヤーを切り替える関数
+        window.switchLayer = (key) => {
+            if (!map || !window.mapLayers) return;
+
+            // 現在のレイヤーを削除
+            if (window.currentLayer) {
+                map.removeLayer(window.currentLayer);
+            }
+
+            // 新しいレイヤーを選択して追加
+            const nextLayer = window.mapLayers[key];
+            if (nextLayer) {
+                nextLayer.addTo(map);
+                window.currentLayer = nextLayer;
+            }
+        };
+
     </script>
 </body>
 </html>
