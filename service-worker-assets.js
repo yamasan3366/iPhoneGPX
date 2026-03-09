@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "P0ncNvxC",
+  "version": "axgRipRX",
   "assets": [
     {
       "hash": "sha256-UUhEHYLFr+lj8XDWCY7HECt/3ixqGD4F28bZL/8ip6I=",
@@ -154,7 +154,7 @@ self.assetsManifest = {
       "url": "_framework/System.Xml.XDocument.wasm"
     },
     {
-      "hash": "sha256-D+JdlZ4BFkAVW/7FnEuMIYl6CQFt2xvo6WeQP+UYyjo=",
+      "hash": "sha256-3qsL79ht8yoP8d045w49fvEAXmFVGtCFkLtYw8Iss8w=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -178,7 +178,7 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.js"
     },
     {
-      "hash": "sha256-hqWCdxBblb8u0/CSdesYLySk0ak5dGuIqN8Cx3incQ8=",
+      "hash": "sha256-k3J8s5ZCN8jWMSLzDGHHsBhMxrAAKI3UbfazCtJ81nw=",
       "url": "_framework/iPhoneGPX.wasm"
     },
     {
